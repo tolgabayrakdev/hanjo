@@ -1,6 +1,17 @@
+import pg from 'pg';
 import UserRepository from "./repository/user-repository.js";
 import UserService from "./service/user-service.js";
 import UserController from "./controller/user-controller.js";
+
+const { Pool } = pg;
+
+const pool = new Pool({
+    user: 'root',
+    host: 'localhost',
+    database: 'postgres',
+    password: 'root',
+    port: 5432,
+});
 
 class Container {
     constructor() {
@@ -16,7 +27,7 @@ class Container {
     }
 
     initializeUserModule() {
-        const userRepository = new UserRepository();
+        const userRepository = new UserRepository(pool);
         const userService = new UserService(userRepository);
         const userController = new UserController(userService);
 
