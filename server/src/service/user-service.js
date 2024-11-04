@@ -6,23 +6,10 @@ class UserService {
     }
 
     async createUser(user){
-        let client;
         try {
-            client = await this.userRepository.beginTransaction();
-            
-            const existingEmail = await this.userRepository.findByEmail(user.email);
-            if (existingEmail) {
-                throw new HttpException(400, 'Bu email adresi zaten kullanımda');
-            }
-
-            const existingUsername = await this.userRepository.findByUsername(user.username);
-            if (existingUsername) {
-                throw new HttpException(400, 'Bu kullanıcı adı zaten kullanımda');
-            }
-            
-            const result = await this.userRepository.create(user, client);
-            await this.userRepository.commitTransaction(client);
-            return result;
+            const newUser = await this.userRepository.createUser(user);
+            return newUser;
+           
         } catch (error) {
             if (client) {
                 await this.userRepository.rollbackTransaction(client);

@@ -1,16 +1,13 @@
 import express from "express";
 import cors from "cors";
-import userRoutes from "./routes/user-routes.js";
-import container from "./container.js";
+import userRouter from "./routes/user-routes";
+
 
 const app = express();
 
 app.use(express.json());
 app.use(cors());
 
-// User modülü
-const userController = container.initializeUserModule();
-const userRouter = userRoutes(userController);
 
 // Routes
 app.use("/api/v1/users", userRouter);
