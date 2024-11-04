@@ -2,7 +2,7 @@ import pg from 'pg';
 const { Pool } = pg;
 
 class UserRepository {
-    constructor(){
+    constructor() {
         this.pool = new Pool({
             user: 'root',
             host: 'localhost',
@@ -20,12 +20,18 @@ class UserRepository {
 
     async delete(id) {
         const query = `DELETE FROM users WHERE id = $1`;
-        await this.pool.query(query,[id]);
+        await this.pool.query(query, [id]);
     }
 
     async getUserById(id) {
         const query = `SELECT * FROM users WHERE id = $1`;
         const result = await this.pool.query(query, [id]);
+        return result.rows[0];
+    }
+
+    async findByEmail(email) {
+        const query = `SELECT * FROM users WHERE email = $1`;
+        const result = await this.pool.query(query, [email]);
         return result.rows[0];
     }
 

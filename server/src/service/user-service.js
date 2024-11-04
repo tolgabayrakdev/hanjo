@@ -1,9 +1,21 @@
+import HttpException from '../exceptions/http-exception.js';
+
 class UserService {
     constructor(userRepository){
         this.userRepository = userRepository
     }
+
     async createUser(user){
-        return this.userRepository.create(user)
+        try {
+            // Email kontrolü
+            const existingEmail = await this.userRepository.findByEmail(user.email);
+            if (existingEmail) {
+                throw new HttpException(400, 'Bu email adresi zaten kullanımda');
+            }
+            return await this.userRepository.create(user);
+        } catch (error) {
+            throw new HttpException(500, error.message);
+        }
     }
 
     async getAllUsers(){
