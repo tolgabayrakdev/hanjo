@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import {
     MenuFoldOutlined,
     MenuUnfoldOutlined,
@@ -13,7 +13,7 @@ import Loading from '../components/Loading';
 
 const { Header, Sider, Content } = Layout;
 
-const App: React.FC = () => {
+const DashboardLayout = () => {
     const [collapsed, setCollapsed] = useState(false);
     const [isLoggingOut, setIsLoggingOut] = useState(false);
     const location = useLocation();
@@ -164,4 +164,4 @@ const App: React.FC = () => {
     );
 };
 
-export default App;
+export default DashboardLayout;
