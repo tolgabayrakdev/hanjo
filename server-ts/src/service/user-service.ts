@@ -1,6 +1,5 @@
 import HttpException from '../exceptions/http-exception';
 import UserRepository from '../repository/user-repository';
-import { PoolClient } from 'pg';
 
 class UserService {
 
