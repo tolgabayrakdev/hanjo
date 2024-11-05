@@ -1,3 +1,5 @@
+import { LoadingOutlined } from "@ant-design/icons";
+import { Spin } from "antd";
 
 export default function Loading() {
   return (
@@ -9,6 +11,8 @@ export default function Loading() {
         alignItems: 'center',
         backgroundColor: ''
       }}
-    >Loading...</div>
+    >
+      <Spin indicator={<LoadingOutlined spin />} />
+    </div>
   )
 }

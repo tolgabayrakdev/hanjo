@@ -2,7 +2,7 @@ import { Button, Card, Form, Input, Typography } from 'antd';
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
 import { Link } from 'react-router-dom';
 
-const { Title } = Typography;
+const { Title, Link: TypographyLink } = Typography;
 
 interface SignInFormData {
   email: string;
@@ -42,8 +42,7 @@ export default function SignIn() {
           >
             <Input 
               prefix={<UserOutlined />} 
-              placeholder="Email" 
-              size="large"
+              placeholder="Email"
             />
           </Form.Item>
 
@@ -54,12 +53,11 @@ export default function SignIn() {
             <Input.Password
               prefix={<LockOutlined />}
               placeholder="Şifre"
-              size="large"
             />
           </Form.Item>
 
           <Form.Item>
-            <Button type="primary" htmlType="submit" block size="large">
+            <Button type="primary" htmlType="submit" block>
               Giriş Yap
             </Button>
           </Form.Item>
@@ -69,8 +67,16 @@ export default function SignIn() {
             justifyContent: 'space-between',
             marginTop: '16px'
           }}>
-            <Link to="/auth/signup">Hesabınız yok mu? Kayıt olun</Link>
-            <Link to="/auth/forgot-password">Şifremi unuttum</Link>
+            <Link to="/sign-up">
+              <TypographyLink style={{ fontSize: '13px' }}>
+                Hesabınız yok mu? Kayıt olun
+              </TypographyLink>
+            </Link>
+            <Link to="/forgot-password">
+              <TypographyLink style={{ fontSize: '13px' }}>
+                Şifremi unuttum
+              </TypographyLink>
+            </Link>
           </div>
         </Form>
       </Card>
