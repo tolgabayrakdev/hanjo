@@ -7,10 +7,24 @@ const HomePage = lazy(()=>import("./pages/Home"));
 const SignInPage = lazy(()=>import("./pages/auth/SignIn"));
 const SignUpPage = lazy(()=>import("./pages/auth/SignUp"));
 
+
+const DashboardLayout = lazy(()=>import("./layouts/DashboardLayout"));
+const DashboardIndexPage = lazy(()=>import("./pages/dashboard/Index"));
+
 const routes = createBrowserRouter([
     {
         path: "/",
         element: <HomePage />
+    },
+    {
+        path: "/dashboard",
+        element: <DashboardLayout />,
+        children: [
+            {
+                path: "",
+                element: <DashboardIndexPage />
+            }
+        ]
     },
     {
         path: "/sign-in",
