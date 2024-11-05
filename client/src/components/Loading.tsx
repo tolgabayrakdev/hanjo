@@ -1,14 +1,17 @@
+import { Spin } from "antd";
 
 export default function Loading() {
   return (
     <div
       style={{
-        minHeight: '100vh',
         display: 'flex',
+        flexDirection: 'column',
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: ''
+        height: '100vh'
       }}
-    >Yükleniyor...</div>
+    >
+      <Spin />
+    </div>
   )
 }
