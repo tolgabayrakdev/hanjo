@@ -2,20 +2,20 @@ import React, { useState } from 'react';
 import {
     MenuFoldOutlined,
     MenuUnfoldOutlined,
-    UploadOutlined,
     UserOutlined,
-    VideoCameraOutlined,
     SettingOutlined,
     LogoutOutlined,
 } from '@ant-design/icons';
 import { Button, Layout, Menu, theme, Dropdown, Space } from 'antd';
 import type { MenuProps } from 'antd';
-import { Outlet } from 'react-router-dom';
+import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 
 const { Header, Sider, Content } = Layout;
 
 const App: React.FC = () => {
     const [collapsed, setCollapsed] = useState(false);
+    const location = useLocation();
+    const navigate = useNavigate();
     const {
         token: { colorBgContainer, borderRadiusLG },
     } = theme.useToken();
@@ -45,6 +45,33 @@ const App: React.FC = () => {
         }
     };
 
+    const handleNavigation = ({ key }: { key: string }) => {
+        navigate(key);
+    };
+
+    const menuItems = [
+        {
+            key: '/dashboard',
+            icon: <UserOutlined />,
+            label: 'Dashboard',
+        },
+        {
+            key: '/dashboard/settings',
+            icon: <SettingOutlined />,
+            label: 'Ayarlar',
+        },
+        {
+            key: '/dashboard/profile',
+            icon: <UserOutlined />,
+            label: 'Profil',
+        },
+        {
+            key: '/dashboard/users',
+            icon: <UserOutlined />,
+            label: 'Kişiler',
+        },
+    ];
+
     return (
         <Layout style={{ minHeight: '100vh' }}>
             <Sider trigger={null} collapsible collapsed={collapsed}>
@@ -63,24 +90,9 @@ const App: React.FC = () => {
                 <Menu
                     theme="dark"
                     mode="inline"
-                    defaultSelectedKeys={['1']}
-                    items={[
-                        {
-                            key: '1',
-                            icon: <UserOutlined />,
-                            label: 'nav 1',
-                        },
-                        {
-                            key: '2',
-                            icon: <VideoCameraOutlined />,
-                            label: 'nav 2',
-                        },
-                        {
-                            key: '3',
-                            icon: <UploadOutlined />,
-                            label: 'nav 3',
-                        },
-                    ]}
+                    selectedKeys={[location.pathname]}
+                    items={menuItems}
+                    onClick={handleNavigation}
                 />
             </Sider>
             <Layout>
