@@ -4,9 +4,14 @@ import { RouterProvider } from 'react-router-dom'
 import routes from './routes'
 import { Suspense } from 'react'
 import Loading from './components/Loading'
+import { ConfigProvider } from 'antd'
 
 createRoot(document.getElementById('root')!).render(
   <Suspense fallback={<Loading />}>
-    <RouterProvider router={routes} />
+    <ConfigProvider theme={{
+      
+    }}>
+      <RouterProvider router={routes} />
+    </ConfigProvider>
   </Suspense>
 )
