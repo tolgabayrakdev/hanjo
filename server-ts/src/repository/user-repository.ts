@@ -1,9 +1,7 @@
-import { PoolClient } from "pg";
-import pool from "../config/database";
-
+import { PoolClient } from 'pg';
+import pool from '../config/database';
 
 class UserRepository {
-
     async beginTransaction() {
         const client = await pool.connect();
         await client.query('BEGIN');
@@ -20,15 +18,13 @@ class UserRepository {
         client.release();
     }
 
-
-
-    async create(user: { username: string; email: string; password: string; }) {
+    async create(user: { username: string; email: string; password: string }) {
         const query = `INSERT INTO users (username, email, password) VALUES ($1, $2, $3) RETURNING *`;
         const result = await pool.query(query, [user.username, user.email, user.password]);
         return result.rows[0];
     }
 
-    async update(id: number, user: { username: string; email: string; password: string; }) {
+    async update(id: number, user: { username: string; email: string; password: string }) {
         const query = `UPDATE users SET username = $1, email = $2, password = $3 WHERE id = $4 RETURNING *`;
         const result = await pool.query(query, [user.username, user.email, user.password, id]);
         return result.rows[0];
@@ -37,7 +33,6 @@ class UserRepository {
     async delete(id: number) {
         const query = `DELETE FROM users WHERE id = $1`;
         await pool.query(query, [id]);
-        
     }
 
     async getUserById(id: number) {

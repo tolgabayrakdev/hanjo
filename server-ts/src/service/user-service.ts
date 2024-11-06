@@ -2,19 +2,17 @@ import HttpException from '../exceptions/http-exception';
 import UserRepository from '../repository/user-repository';
 
 class UserService {
-
     private userRepository: UserRepository;
 
     constructor(userRepository: UserRepository) {
         this.userRepository = userRepository;
     }
 
-
-    async createUser(user: { username: string; email: string; password: string; }) {
+    async createUser(user: { username: string; email: string; password: string }) {
         let client;
-        try {                        
-            const existingUsername = await this.userRepository.findByUsername(user.username);  
-                      
+        try {
+            const existingUsername = await this.userRepository.findByUsername(user.username);
+
             if (existingUsername) {
                 throw new HttpException(400, `Username '${user.username}' already exists!`);
             }
@@ -27,25 +25,23 @@ class UserService {
             const newUser = await this.userRepository.create(user);
             await this.userRepository.commitTransaction(client);
             return newUser;
-
         } catch (error) {
             if (client) {
                 await this.userRepository.rollbackTransaction(client);
             }
-            if (error instanceof HttpException) {                
+            if (error instanceof HttpException) {
                 throw error;
             }
             throw new HttpException(500, (error as Error).message);
         }
     }
 
-    async updateUser(id: number, user: { username: string; email: string; password: string; }) {
+    async updateUser(id: number, user: { username: string; email: string; password: string }) {
         let client;
         try {
             // Username ve email kontrolü (kendi ID'si hariç)
             const existingUsername = await this.userRepository.findByUsername(user.username);
             if (existingUsername && existingUsername.id !== id) {
-
                 throw new HttpException(400, `Kullanıcı adı '${user.username}' zaten kullanılıyor`);
             }
 

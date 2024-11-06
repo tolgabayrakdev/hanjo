@@ -8,5 +8,4 @@ const pool = new pg.Pool({
     port: 5432,
 });
 
-
 export default pool;
