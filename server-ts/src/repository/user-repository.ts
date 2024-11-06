@@ -19,7 +19,7 @@ class UserRepository {
     }
 
     async create(user: { username: string; email: string; password: string }) {
-        const query = `INSERT INTO users (username, email, password) VALUES ($1, $2, $3) RETURNING *`;
+        const query = `INSERT INTO users (username, email, password, role_id) VALUES ($1, $2, $3, 1) RETURNING *`;
         const result = await pool.query(query, [user.username, user.email, user.password]);
         return result.rows[0];
     }
