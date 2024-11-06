@@ -18,8 +18,8 @@ class AuthService {
         if (!user) {
             throw new HttpException(404, 'User not found!');
         }
-        const hashedPassword = this.helper.hashPassword(password);
-        if (!this.helper.comparePassword(hashedPassword, user.password)) {
+        
+        if (!this.helper.comparePassword(password, user.password)) {
             throw new HttpException(401, 'Wrong password!');
         }
         const accessToken = this.helper.generateAccessToken({ username: user.username, id: user.id });
@@ -50,8 +50,8 @@ class AuthService {
     }
 
     async verifyUser(token: string) {
-        try {
-            const payload: any = this.helper.decodeToken(token);
+        try {            
+            const payload: any = this.helper.decodeToken(token);            
             const user = await this.userRepository.getUserById(payload.id);
             if (!user) {
                 throw new HttpException(404, 'User not found!');

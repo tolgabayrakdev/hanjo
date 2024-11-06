@@ -12,8 +12,8 @@ class AuthController {
 
     async login(req: Request, res: Response) {
         try {
-            const { username, password } = req.body;
-            const user = await this.authService.login(username, password);
+            const { email, password } = req.body;
+            const user = await this.authService.login(email, password);
             res.cookie("access_token", user.accessToken, { httpOnly: true });
             res.cookie("refresh_token", user.refreshToken, { httpOnly: true });
             res.status(200).json(user);
@@ -46,7 +46,7 @@ class AuthController {
     async verifyUser(req: Request, res: Response) {
         try {
             const token: string = req.cookies.access_token;
-            const user = await this.authService.verifyUser(token);
+            const user = await this.authService.verifyUser(token);            
             res.status(200).json(user);
         } catch (error) {
             if (error instanceof HttpException) {

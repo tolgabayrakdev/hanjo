@@ -30,7 +30,7 @@ export class Helper {
         }
     }
 
-    public comparePassword(plainPassword: string, hashedPassword: string): boolean {
+    public comparePassword(plainPassword: string, hashedPassword: string): boolean {        
         const hashedPlainPassword = this.hashPassword(plainPassword);
         return hashedPlainPassword === hashedPassword;
     }
