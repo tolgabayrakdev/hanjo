@@ -56,7 +56,7 @@ class AuthService {
             if (!user) {
                 throw new HttpException(404, 'User not found!');
             }
-            return user;
+            return { username: user.username, email: user.email, role_id: user.role_id };   
         } catch (error) {
             if (error instanceof HttpException) {
                 throw error;
