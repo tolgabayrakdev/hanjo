@@ -67,7 +67,7 @@ export default function SignUp() {
   }
 
   return (
-    <div className="flex justify-center items-center min-h-screen bg-gray-50">
+    <div className="flex justify-center items-center min-h-screen">
       <Card className="w-[400px]">
         <CardHeader>
           <CardTitle>Hesap Oluştur</CardTitle>

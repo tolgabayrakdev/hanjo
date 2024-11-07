@@ -7,6 +7,10 @@ const HomePage = lazy(() => import("./pages/Home"));
 const SignInPage = lazy(() => import("./pages/authentication/SignIn"));
 const SignUpPage = lazy(() => import("./pages/authentication/SignUp"));
 
+const DashboardLayout = lazy(() => import("./layouts/DashboardLayout"));
+const DashboardPage = lazy(() => import("./pages/dashboard/Index"));
+const DashboardSettingsPage = lazy(() => import("./pages/dashboard/Settings"));
+
 
 const routes = createBrowserRouter([
     {
@@ -20,6 +24,14 @@ const routes = createBrowserRouter([
     {
         path: "/sign-up",
         element: <SignUpPage />
+    },
+    {
+        path: "/dashboard",
+        element: <DashboardLayout />,
+        children: [
+            { path: "", element: <DashboardPage />, index: true },
+            { path: "settings", element: <DashboardSettingsPage /> }
+        ]
     },
     {
         path: "/*",
