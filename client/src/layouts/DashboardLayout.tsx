@@ -4,11 +4,12 @@ import { Outlet } from "react-router-dom";
 
 export default function DashboardLayout() {
     return (
+        
         <SidebarProvider>
             <AppSidebar />
-            <main className="p-1">
+            <main className="flex-1 overflow-auto">
                 <SidebarTrigger />
-                <section className="mt-6 ml-10">
+                <section className="mt-2 ml-2 p-3">
                     <Outlet />
                 </section>
             </main>

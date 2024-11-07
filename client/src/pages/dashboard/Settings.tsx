@@ -12,7 +12,7 @@ function UserInfoCard() {
   }
 
   return (
-    <Card className="w-full mb-6">
+    <Card className="mb-6">
       <CardHeader>
         <CardTitle>Kullanıcı Bilgileri</CardTitle>
         <CardDescription>Kullanıcı adınızı ve e-posta adresinizi güncelleyin.</CardDescription>
@@ -27,7 +27,9 @@ function UserInfoCard() {
             <Label htmlFor="email">E-posta</Label>
             <Input id="email" type="email" placeholder="Yeni e-posta adresi" />
           </div>
-          <Button type="submit" className="w-full">Bilgileri Güncelle</Button>
+          <div className="flex justify-start">
+            <Button type="submit">Bilgileri Güncelle</Button>
+          </div>
         </form>
       </CardContent>
     </Card>
@@ -60,7 +62,9 @@ function PasswordChangeCard() {
             <Label htmlFor="confirmPassword">Yeni Şifre (Tekrar)</Label>
             <Input id="confirmPassword" type="password" placeholder="Yeni şifrenizi tekrar girin" />
           </div>
-          <Button type="submit" className="w-full">Şifreyi Değiştir</Button>
+          <div className="flex justify-start">
+            <Button type="submit">Şifreyi Değiştir</Button>
+          </div>
         </form>
       </CardContent>
     </Card>
@@ -84,7 +88,7 @@ function DeleteAccountCard() {
       <CardContent>
         <AlertDialog open={showDeleteConfirm} onOpenChange={setShowDeleteConfirm}>
           <AlertDialogTrigger asChild>
-            <Button variant="destructive" className="w-full">Hesabı Sil</Button>
+            <Button variant="destructive">Hesabı Sil</Button>
           </AlertDialogTrigger>
           <AlertDialogContent>
             <AlertDialogHeader>
@@ -104,11 +108,11 @@ function DeleteAccountCard() {
   )
 }
 
-export default function Component() {
+export default function Settings() {
   return (
-    <div className="p-4 w-full">
+    <div className="p-4 w-full max-w-3xl mx-auto">
       <h1 className="text-2xl font-bold mb-6">Ayarlar</h1>
-      <div className="w-full">
+      <div>
         <UserInfoCard />
         <PasswordChangeCard />
         <DeleteAccountCard />

@@ -5,10 +5,10 @@ import { Label } from "@radix-ui/react-label";
 
 export default function Index() {
     return (
-        <div>
+        <div className="">
             <p>Index</p>
 
-            <Card className="w-full mb-6">
+            <Card className=" mb-6">
                 <CardHeader>
                     <CardTitle>Kullanıcı Bilgileri</CardTitle>
                     <CardDescription>Kullanıcı adınızı ve e-posta adresinizi güncelleyin.</CardDescription>
