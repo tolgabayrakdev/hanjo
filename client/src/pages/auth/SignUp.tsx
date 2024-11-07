@@ -1,8 +1,9 @@
-import { Button, Card, Form, Input, Typography } from 'antd';
+import { Button, Card, Form, Input, message, Typography } from 'antd';
 import { UserOutlined, LockOutlined, MailOutlined } from '@ant-design/icons';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { useState } from 'react';
 
-const { Title, Link: TypographyLink } = Typography;
+const { Title } = Typography;
 
 interface SignUpFormData {
   username: string;
@@ -12,24 +13,67 @@ interface SignUpFormData {
 }
 
 export default function SignUp() {
-  const onFinish = (values: SignUpFormData) => {
-    console.log('Form değerleri:', values);
-    // Burada kayıt işlemlerini yapabilirsiniz
+  const [loading, setLoading] = useState<boolean>(false);
+  const [messageApi, contextHolder] = message.useMessage();
+  const navigate = useNavigate();
+
+
+  const onFinish = async (values: SignUpFormData) => {
+    setLoading(true);
+    try {
+      const res = await fetch(import.meta.env.VITE_BACKEND_URL + `/api/v1/auth/register`, {
+        method: "POST",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          username: values.username,
+          email: values.email,
+          password: values.password
+        })
+      });
+      if (res.status === 201) {
+        messageApi.open({
+          type: 'success',
+          content: 'Hesap olusturuldu.',
+        });
+        setTimeout(() => {
+          setLoading(false);
+          navigate("/sign-in")
+        }, 1000)
+      } else {
+        messageApi.open({
+          type: 'error',
+          content: 'Hesap olusturulurken bir hata oluştu.',
+        });
+        setTimeout(() => {
+          setLoading(false);
+        }, 1000);
+      }
+    } catch (error) {
+      messageApi.open({
+        type: 'error',
+        content: 'Hesap olusturulurken bir hata oluştu.',
+      });
+      setLoading(false);
+    }
   };
 
   return (
-    <div style={{ 
-      minHeight: '100vh', 
-      display: 'flex', 
-      justifyContent: 'center', 
+    <div style={{
+      minHeight: '100vh',
+      display: 'flex',
+      justifyContent: 'center',
       alignItems: 'center',
       backgroundColor: ''
     }}>
+      {contextHolder}
       <Card style={{ width: 400, padding: '24px' }}>
         <div style={{ textAlign: 'center', marginBottom: 24 }}>
           <Title level={2}>Kayıt Ol</Title>
         </div>
-        
+
         <Form
           name="signup"
           onFinish={onFinish}
@@ -42,8 +86,8 @@ export default function SignUp() {
               { min: 3, message: 'Kullanıcı adı en az 3 karakter olmalıdır!' }
             ]}
           >
-            <Input 
-              prefix={<UserOutlined />} 
+            <Input
+              prefix={<UserOutlined />}
               placeholder="Kullanıcı Adı"
             />
           </Form.Item>
@@ -55,8 +99,8 @@ export default function SignUp() {
               { type: 'email', message: 'Geçerli bir email adresi giriniz!' }
             ]}
           >
-            <Input 
-              prefix={<MailOutlined />} 
+            <Input
+              prefix={<MailOutlined />}
               placeholder="Email"
             />
           </Form.Item>
@@ -96,20 +140,20 @@ export default function SignUp() {
           </Form.Item>
 
           <Form.Item>
-            <Button type="primary" htmlType="submit" block>
+            <Button type="primary" htmlType="submit" block loading={loading}>
               Kayıt Ol
             </Button>
           </Form.Item>
 
-          <div style={{ 
-            display: 'flex', 
+          <div style={{
+            display: 'flex',
             justifyContent: 'center',
             marginTop: '16px'
           }}>
             <Link to="/sign-in">
-              <TypographyLink style={{ fontSize: '13px' }}>
+              <div style={{ fontSize: '13px' }}>
                 Zaten hesabınız var mı? Giriş yapın
-              </TypographyLink>
+              </div>
             </Link>
           </div>
         </Form>
