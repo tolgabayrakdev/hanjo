@@ -46,7 +46,7 @@ class AuthController {
     async verifyUser(req: Request, res: Response) {
         try {
             const token: string = req.cookies.access_token;
-            const user = await this.authService.verifyUser(token);            
+            const user = await this.authService.verifyUser(token);
             res.status(200).json(user);
         } catch (error) {
             if (error instanceof HttpException) {
