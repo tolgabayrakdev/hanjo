@@ -3,16 +3,10 @@ import './index.css'
 import { RouterProvider } from 'react-router-dom'
 import routes from './routes'
 import { Suspense } from 'react'
-import Loading from './components/Loading'
-import { ConfigProvider } from 'antd'
-import 'antd/dist/reset.css'
+import Loading from './components/loading'
 
 createRoot(document.getElementById('root')!).render(
   <Suspense fallback={<Loading />}>
-    <ConfigProvider theme={{
-      
-    }}>
-      <RouterProvider router={routes} />
-    </ConfigProvider>
+    <RouterProvider router={routes} />
   </Suspense>
 )
