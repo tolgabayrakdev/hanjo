@@ -1,4 +1,6 @@
-import { Calendar, ChevronUp, Home, Inbox, Search, Settings, User2 } from "lucide-react"
+import { ChevronUp, Home, Inbox, Settings, User2 } from "lucide-react"
+import { useEffect, useState } from "react"
+import { useLocation, useNavigate } from "react-router-dom"
 
 import {
   Sidebar,
@@ -12,7 +14,6 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "./ui/dropdown-menu"
-import { useLocation } from "react-router-dom"
 
 // Menu items.
 const items = [
@@ -27,24 +28,50 @@ const items = [
     icon: Inbox,
   },
   {
-    title: "Calendar",
-    url: "#",
-    icon: Calendar,
-  },
-  {
-    title: "Search",
-    url: "#",
-    icon: Search,
-  },
-  {
     title: "Settings",
     url: "/dashboard/settings",
     icon: Settings,
   },
 ]
 
+interface UserInfo {
+  username: string;
+  email: string;
+}
+
 export function AppSidebar() {
   const { pathname } = useLocation();
+  const navigate = useNavigate();
+  const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
+
+  useEffect(() => {
+    // Kullanıcı bilgilerini çek
+    fetch("http://localhost:1234/api/v1/auth/verify", {
+      method: "POST",
+      credentials: "include" 
+    })
+      .then(res => res.json())
+      .then(data => {
+        setUserInfo(data);
+      })
+      .catch(err => {
+        console.error("Kullanıcı bilgileri alınamadı:", err);
+        navigate("/sign-in");
+      });
+  }, [navigate]);
+
+  const handleSignOut = async () => {
+    try {
+      await fetch("http://localhost:1234/api/v1/auth/logout", {
+        method: "POST",
+        credentials: "include"
+      });
+      navigate("/sign-in");
+    } catch (error) {
+      console.error("Çıkış yapılırken hata oluştu:", error);
+    }
+  };
+
   return (
     <Sidebar>
       <SidebarContent>
@@ -72,7 +99,8 @@ export function AppSidebar() {
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <SidebarMenuButton>
-                  <User2 /> Username
+                  <User2 />
+                  {userInfo ? userInfo.username : "Yükleniyor..."}
                   <ChevronUp className="ml-auto" />
                 </SidebarMenuButton>
               </DropdownMenuTrigger>
@@ -86,7 +114,7 @@ export function AppSidebar() {
                 <DropdownMenuItem>
                   <span>Billing</span>
                 </DropdownMenuItem>
-                <DropdownMenuItem>
+                <DropdownMenuItem onClick={handleSignOut}>
                   <span>Sign out</span>
                 </DropdownMenuItem>
               </DropdownMenuContent>
