@@ -22,7 +22,7 @@ class UserController {
         }
     }
 
-    async getAllUsers(req: Request, res: Response) {
+    async getAllUsers(_req: Request, res: Response) {
         try {
             const result = await this.userService.getAllUsers();
             res.status(200).json(result);
@@ -54,7 +54,7 @@ class UserController {
 
     async deleteUser(req: Request, res: Response) {
         try {
-            const result = await this.userService.deleteUser(parseInt(req.params.id));
+            await this.userService.deleteUser(parseInt(req.params.id));
             res.status(204).send();
         } catch (error) {
             if (error instanceof HttpException) {
