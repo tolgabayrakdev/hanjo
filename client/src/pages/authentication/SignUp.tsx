@@ -36,9 +36,8 @@ export default function SignUp() {
   })
 
   const onSubmit = async (values: SignUpValues) => {
-    setStatus('Hesap oluşturuluyor...')
     try {
-      const response = await fetch(process.env.NEXT_PUBLIC_SERVER_URL + `/api/auth/register`, {
+      const response = await fetch(import.meta.env.VITE_BACKEND_URL + `/api/v1/auth/register`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

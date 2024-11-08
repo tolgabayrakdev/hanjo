@@ -1,5 +1,3 @@
-"use client"
-
 import { z } from "zod"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -9,8 +7,8 @@ import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { Link, useNavigate } from "react-router-dom"
+import { Loader2 } from "lucide-react"
 
-// Zod şeması
 const signInSchema = z.object({
   email: z.string().email("Geçerli bir e-posta adresi girin"),
   password: z.string().min(6, "Şifre en az 6 karakter olmalıdır"),
@@ -21,6 +19,8 @@ type SignInValues = z.infer<typeof signInSchema>
 export default function SignIn() {
   const navigate = useNavigate();
   const [status, setStatus] = useState<string>('')
+  const [isLoading, setIsLoading] = useState(false)
+
   const form = useForm<SignInValues>({
     resolver: zodResolver(signInSchema),
     defaultValues: {
@@ -30,9 +30,9 @@ export default function SignIn() {
   })
 
   const onSubmit = async (values: SignInValues) => {
-    setStatus('Giriş yapılıyor...')
+    setIsLoading(true)
     try {
-      const response = await fetch(process.env.NEXT_PUBLIC_SERVER_URL + `/api/auth/login`, {
+      const response = await fetch(import.meta.env.VITE_BACKEND_URL + `/api/v1/auth/login`, {
         method: 'POST',
         credentials: "include",
         headers: {
@@ -41,24 +41,32 @@ export default function SignIn() {
         body: JSON.stringify(values),
       })
 
-      if (response.ok) {
+      if (response.status === 200) {
         setStatus('Giriş başarılı! Yönlendiriliyorsunuz...')
-        navigate("/dashboard")
+        setTimeout(() => {
+          navigate("/dashboard")
+        }, 1000)
       } else if (response.status === 400) {
         setStatus('E-posta veya parola hatalı. Lütfen bilgilerinizi kontrol edin.')
-      } else {
+        setIsLoading(false)
+      } else if (response.status === 404) {
+        setStatus('E-posta hatalı. Lütfen bilgilerinizi kontrol edin.')
+        setIsLoading(false)
+      }
+      else {
         const errorData = await response.json()
         setStatus(`Giriş başarısız: ${errorData.message || 'Bir hata oluştu'}`)
+        setIsLoading(false)
       }
     } catch (error) {
       setStatus('Bir hata oluştu. Lütfen tekrar deneyin.')
       console.error('Giriş hatası:', error)
+      setIsLoading(false)
     }
   }
 
   return (
     <>
-
       <div className="flex justify-center items-center min-h-screen">
         <Card className="w-[350px]">
           <CardHeader>
@@ -94,8 +102,15 @@ export default function SignIn() {
                     </FormItem>
                   )}
                 />
-                <Button className="w-full" type="submit">
-                  Giriş Yap
+                <Button disabled={isLoading} className="w-full" type="submit">
+                  {isLoading ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Giriş yapılıyor...
+                    </>
+                  ) : (
+                    "Giriş Yap"
+                  )}
                 </Button>
                 {status && <p className="mt-2 text-sm text-center text-gray-600">{status}</p>}
               </form>
@@ -115,6 +130,5 @@ export default function SignIn() {
         </Card>
       </div>
     </>
-
   )
 }
