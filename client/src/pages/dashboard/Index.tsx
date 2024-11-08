@@ -1,13 +1,12 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Label } from "@radix-ui/react-label";
+import { Label } from "@/components/ui/label";
 
 export default function Index() {
     return (
-        <div className="">
+        <div>
             <p>Index</p>
-
             <Card className=" mb-6">
                 <CardHeader>
                     <CardTitle>Kullanıcı Bilgileri</CardTitle>
