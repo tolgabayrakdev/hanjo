@@ -50,12 +50,12 @@ function UserInfoCard() {
 
   const handleEdit = () => {
     setIsEditing(true);
-    setEditedInfo({...userInfo});
+    setEditedInfo({ ...userInfo });
   };
 
   const handleCancel = () => {
     setIsEditing(false);
-    setEditedInfo({...userInfo});
+    setEditedInfo({ ...userInfo });
   };
 
   const handleSubmit = async (event: React.FormEvent) => {
@@ -151,8 +151,8 @@ function UserInfoCard() {
             ) : (
               <>
                 <Button type="submit">Kaydet</Button>
-                <Button 
-                  type="button" 
+                <Button
+                  type="button"
                   variant="outline"
                   onClick={handleCancel}
                 >
@@ -168,9 +168,28 @@ function UserInfoCard() {
 }
 
 function PasswordChangeCard() {
-  const handleSubmit = (event: React.FormEvent) => {
+  const [currentPassword, setCurrentPassword] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+
+  const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault()
-    console.log('Şifre değiştirildi')
+    try {
+      const res = await fetch('http://localhost:1234/api/v1/user-update', {
+        method: 'PUT',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            newPassword: newPassword,
+            currentPassword: currentPassword
+        })
+        
+      })
+    } catch (error) {
+
+    }
   }
 
   return (
@@ -183,15 +202,15 @@ function PasswordChangeCard() {
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <Label htmlFor="currentPassword">Mevcut Şifre</Label>
-            <Input id="currentPassword" type="password" placeholder="Mevcut şifreniz" />
+            <Input onChange={(e) => setCurrentPassword(e.target.value)} id="currentPassword" type="password" placeholder="Mevcut şifreniz" />
           </div>
           <div>
             <Label htmlFor="newPassword">Yeni Şifre</Label>
-            <Input id="newPassword" type="password" placeholder="Yeni şifreniz" />
+            <Input onChange={(e) => setNewPassword(e.target.value)} id="newPassword" type="password" placeholder="Yeni şifreniz" />
           </div>
           <div>
             <Label htmlFor="confirmPassword">Yeni Şifre (Tekrar)</Label>
-            <Input id="confirmPassword" type="password" placeholder="Yeni şifrenizi tekrar girin" />
+            <Input onChange={(e) => setConfirmPassword(e.target.value)} id="confirmPassword" type="password" placeholder="Yeni şifrenizi tekrar girin" />
           </div>
           <div className="flex justify-start">
             <Button type="submit">Şifreyi Değiştir</Button>
