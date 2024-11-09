@@ -11,30 +11,33 @@ class UserActionService {
         this.helper = new Helper();
     }
 
-    async userUpdate(id: number, user: { username: string; email: string; password: string }) {
+    async userUpdate(id: number, user: { username?: string; email?: string; password?: string }) {
         const client = await this.userActionRepository.beginTransaction();
 
-        console.log(user);
-        
         try {
-            // Check if email exists for other users
-            const emailExists = await this.userActionRepository.checkEmailExists(user.email, id);
-            if (emailExists) {
-                throw new HttpException(400, 'Bu email adresi zaten kullanımda');
+            // Email değiştiriliyorsa kontrol et
+            if (user.email) {
+                const emailExists = await this.userActionRepository.checkEmailExists(user.email, id);
+                if (emailExists) {
+                    throw new HttpException(400, 'Bu email adresi zaten kullanımda');
+                }
             }
 
-            const hashedPassword = this.helper.hashPassword(user.password);
+            // Şifre değiştiriliyorsa hash'le
+            if (user.password) {
+                user.password = this.helper.hashPassword(user.password);
+            }
 
-            const updatedUser = await this.userActionRepository.userUpdate(id, {
-                ...user,
-                password: hashedPassword
-            });
+            const updatedUser = await this.userActionRepository.userUpdate(id, user);
+            
+            if (!updatedUser) {
+                throw new HttpException(404, 'Kullanıcı bulunamadı');
+            }
 
             await this.userActionRepository.commitTransaction(client);
             return updatedUser;
 
         } catch (error) {
-            
             await this.userActionRepository.rollbackTransaction(client);
 
             if (error instanceof HttpException) {
