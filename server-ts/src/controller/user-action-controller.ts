@@ -7,13 +7,28 @@ class UserActionController {
 
     constructor(userActionService: UserActionService) {
         this.userActionService = userActionService;
-    }   
+    }
 
     async changePassword(req: Request, res: Response) {
-        const { id } = req.params;
+        const id = req.user.id;
         const { currentPassword, newPassword } = req.body;
         try {
-            const result = await this.userActionService.changePassword(+id, { currentPassword, newPassword });
+            const result = await this.userActionService.changePassword(id, { currentPassword, newPassword });
+            res.status(200).json(result);
+        } catch (error) {
+            if (error instanceof HttpException) {
+                res.status(error.status).json({ error: error.message });
+            } else {
+                res.status(500).json({ error: 'Internal server error' });
+            }
+        }
+    }
+
+    async userUpdate(req: Request, res: Response) {
+        try {
+            const id = req.user.id;
+            const user = req.body;
+            const result = await this.userActionService.userUpdate(id, user);
             res.status(200).json(result);
         } catch (error) {
             if (error instanceof HttpException) {

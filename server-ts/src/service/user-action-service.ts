@@ -11,88 +11,90 @@ class UserActionService {
         this.helper = new Helper();
     }
 
-    async userUpdate(user: { username: string; email: string; password: string }) {
+    async userUpdate(id: number, user: { username: string; email: string; password: string }) {
+        const client = await this.userActionRepository.beginTransaction();
+
+        console.log(user);
+        
         try {
-            const emailExists = await this.userActionRepository.checkEmailExists(user.email);
+            // Check if email exists for other users
+            const emailExists = await this.userActionRepository.checkEmailExists(user.email, id);
             if (emailExists) {
                 throw new HttpException(400, 'Bu email adresi zaten kullanımda');
             }
 
             const hashedPassword = this.helper.hashPassword(user.password);
 
-            const client = await this.userActionRepository.beginTransaction();
+            const updatedUser = await this.userActionRepository.userUpdate(id, {
+                ...user,
+                password: hashedPassword
+            });
 
-            try {
-                const updatedUser = await this.userActionRepository.userUpdate({
-                    ...user,
-                    password: hashedPassword
-                });
+            await this.userActionRepository.commitTransaction(client);
+            return updatedUser;
 
-                await this.userActionRepository.commitTransaction(client);
-                return updatedUser;
-            } catch (error) {
-                await this.userActionRepository.rollbackTransaction(client);
+        } catch (error) {
+            
+            await this.userActionRepository.rollbackTransaction(client);
+
+            if (error instanceof HttpException) {
                 throw error;
             }
-        } catch (error) {
-            throw new Error(error instanceof Error ? error.message : 'Kullanıcı güncellenirken bir hata oluştu');
+            throw new HttpException(500, 'Kullanıcı güncellenirken bir hata oluştu');
         }
     }
 
     async changePassword(id: number, data: { currentPassword: string; newPassword: string }) {
+        const client = await this.userActionRepository.beginTransaction();
+
         try {
             const user = await this.userActionRepository.getUserById(id);
-
             if (!user) {
                 throw new HttpException(404, 'User not found!');
             }
 
-            // Mevcut şifreyi kontrol et
             const isPasswordValid = this.helper.comparePassword(data.currentPassword, user.password);
             if (!isPasswordValid) {
                 throw new HttpException(401, 'Wrong password!');
             }
 
-            // Yeni şifreyi hashle
             const hashedNewPassword = this.helper.hashPassword(data.newPassword);
+            const updatedUser = await this.userActionRepository.changePassword(id, hashedNewPassword);
 
-            // Transaction başlat
-            const client = await this.userActionRepository.beginTransaction();
+            await this.userActionRepository.commitTransaction(client);
+            return updatedUser;
 
-            try {
-                const updatedUser = await this.userActionRepository.changePassword(id, hashedNewPassword);
-                await this.userActionRepository.commitTransaction(client);
-                return updatedUser;
-            } catch (error) {
-                await this.userActionRepository.rollbackTransaction(client);
+        } catch (error) {
+            await this.userActionRepository.rollbackTransaction(client);
+
+            if (error instanceof HttpException) {
                 throw error;
             }
-        } catch (error) {
-            throw new Error(error instanceof Error ? error.message : 'Password change failed');
+            throw new HttpException(500, 'Password change failed');
         }
     }
 
     async deleteAccount(id: number) {
+        const client = await this.userActionRepository.beginTransaction();
+
         try {
             const user = await this.userActionRepository.getUserById(id);
-
             if (!user) {
                 throw new HttpException(404, 'User not found!');
             }
 
-            // Transaction başlat
-            const client = await this.userActionRepository.beginTransaction();
+            const result = await this.userActionRepository.deleteAccount(id);
 
-            try {
-                const result = await this.userActionRepository.deleteAccount(id);
-                await this.userActionRepository.commitTransaction(client);
-                return result;
-            } catch (error) {
-                await this.userActionRepository.rollbackTransaction(client);
+            await this.userActionRepository.commitTransaction(client);
+            return result;
+
+        } catch (error) {
+            await this.userActionRepository.rollbackTransaction(client);
+
+            if (error instanceof HttpException) {
                 throw error;
             }
-        } catch (error) {
-            throw new Error(error instanceof Error ? error.message : 'Account deletion failed');
+            throw new HttpException(500, 'Account deletion failed');
         }
     }
 }

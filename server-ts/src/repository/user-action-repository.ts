@@ -18,15 +18,15 @@ class UserActionRepository {
         client.release();
     }
 
-    async userUpdate(user: { username: string; email: string; password: string }) {
+    async userUpdate(id: number, user: { username?: string; email?: string; password?: string }) {        
         const query = `
-            INSERT INTO users (username, email, password, role_id) 
-            VALUES ($1, $2, $3, 1) 
+            UPDATE users 
+            SET username = $1, email = $2, password = $3 
+            WHERE id = $4 
             RETURNING id, username, email, role_id`;
-        const result = await pool.query(query, [user.username, user.email, user.password]);
+        const result = await pool.query(query, [user.username, user.email, user.password, id]);
         return result.rows[0];
     }
-
     async checkEmailExists(email: string, userId?: number) {
         const query = userId 
             ? `SELECT * FROM users WHERE email = $1 AND id != $2`
