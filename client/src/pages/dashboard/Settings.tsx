@@ -1,14 +1,115 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog"
+import { Skeleton } from "@/components/ui/skeleton"
+
+interface UserInfo {
+  username: string;
+  email: string;
+}
+
+const fetchUserInfo = async () => {
+  const response = await fetch('http://localhost:1234/api/v1/auth/verify', {
+    method: 'POST',
+    credentials: 'include'
+  });
+  if (!response.ok) {
+    throw new Error('Kullanıcı bilgileri alınamadı');
+  }
+  const data = await response.json();
+  return {
+    username: data.username,
+    email: data.email
+  };
+};
 
 function UserInfoCard() {
-  const handleSubmit = (event: React.FormEvent) => {
-    event.preventDefault()
-    console.log('Kullanıcı bilgileri güncellendi')
+  const [userInfo, setUserInfo] = useState<UserInfo>({ username: '', email: '' });
+  const [isEditing, setIsEditing] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [editedInfo, setEditedInfo] = useState<UserInfo>({ username: '', email: '' });
+
+  useEffect(() => {
+    const getUserInfo = async () => {
+      try {
+        const data = await fetchUserInfo();
+        setUserInfo(data);
+        setEditedInfo(data);
+      } catch (error) {
+        console.error('Kullanıcı bilgileri alınamadı:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    getUserInfo();
+  }, []);
+
+  const handleEdit = () => {
+    setIsEditing(true);
+    setEditedInfo({...userInfo});
+  };
+
+  const handleCancel = () => {
+    setIsEditing(false);
+    setEditedInfo({...userInfo});
+  };
+
+  const handleSubmit = async (event: React.FormEvent) => {
+    event.preventDefault();
+    try {
+      const response = await fetch('http://localhost:1234/api/v1/user-update', {
+        method: 'PUT',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(editedInfo)
+      });
+
+      if (response.ok) {
+        setUserInfo(editedInfo);
+        setIsEditing(false);
+      } else {
+        const errorData = await response.json();
+        console.error('Güncelleme hatası:', errorData);
+      }
+    } catch (error) {
+      console.error('Güncelleme hatası:', error);
+    }
+  };
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setEditedInfo(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  if (isLoading) {
+    return (
+      <Card className="mb-6">
+        <CardHeader>
+          <CardTitle>Kullanıcı Bilgileri</CardTitle>
+          <CardDescription>Kullanıcı adınızı ve e-posta adresinizi güncelleyin.</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div>
+            <Label>Kullanıcı Adı</Label>
+            <Skeleton className="h-10 w-full" />
+          </div>
+          <div>
+            <Label>E-posta</Label>
+            <Skeleton className="h-10 w-full" />
+          </div>
+          <Skeleton className="h-10 w-24" />
+        </CardContent>
+      </Card>
+    );
   }
 
   return (
@@ -21,19 +122,49 @@ function UserInfoCard() {
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <Label htmlFor="username">Kullanıcı Adı</Label>
-            <Input id="username" placeholder="Yeni kullanıcı adı" />
+            <Input
+              id="username"
+              name="username"
+              value={isEditing ? editedInfo.username : userInfo.username}
+              onChange={handleInputChange}
+              readOnly={!isEditing}
+              className={!isEditing ? "bg-gray-100" : ""}
+            />
           </div>
           <div>
             <Label htmlFor="email">E-posta</Label>
-            <Input id="email" type="email" placeholder="Yeni e-posta adresi" />
+            <Input
+              id="email"
+              name="email"
+              type="email"
+              value={isEditing ? editedInfo.email : userInfo.email}
+              onChange={handleInputChange}
+              readOnly={!isEditing}
+              className={!isEditing ? "bg-gray-100" : ""}
+            />
           </div>
-          <div className="flex justify-start">
-            <Button type="submit">Bilgileri Güncelle</Button>
+          <div className="flex justify-start gap-2">
+            {!isEditing ? (
+              <Button type="button" onClick={handleEdit}>
+                Düzenle
+              </Button>
+            ) : (
+              <>
+                <Button type="submit">Kaydet</Button>
+                <Button 
+                  type="button" 
+                  variant="outline"
+                  onClick={handleCancel}
+                >
+                  İptal
+                </Button>
+              </>
+            )}
           </div>
         </form>
       </CardContent>
     </Card>
-  )
+  );
 }
 
 function PasswordChangeCard() {
