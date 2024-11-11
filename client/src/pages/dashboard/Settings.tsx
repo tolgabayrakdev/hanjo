@@ -175,29 +175,69 @@ function UserInfoCard() {
 }
 
 function PasswordChangeCard() {
+  const [isOpen, setIsOpen] = useState(false);
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [error, setError] = useState<string | null>(null);
+
+  const resetForm = () => {
+    setCurrentPassword('');
+    setNewPassword('');
+    setConfirmPassword('');
+    setError(null);
+  };
+
+  const handleCancel = () => {
+    setIsOpen(false);
+    resetForm();
+  };
 
   const handleSubmit = async (event: React.FormEvent) => {
-    event.preventDefault()
+    event.preventDefault();
+    setError(null);
+
+    // Form doğrulama
+    if (!currentPassword || !newPassword || !confirmPassword) {
+      setError("Lütfen tüm alanları doldurun.");
+      return;
+    }
+
+    if (newPassword !== confirmPassword) {
+      setError("Yeni şifreler eşleşmiyor.");
+      return;
+    }
+
+    if (newPassword.length < 6) {
+      setError("Yeni şifre en az 6 karakter olmalıdır.");
+      return;
+    }
+
     try {
-      const res = await fetch('http://localhost:1234/api/v1/user-update', {
+      const response = await fetch('http://localhost:1234/api/v1/user-update/change-password', {
         method: 'PUT',
         credentials: 'include',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-            newPassword: newPassword,
-            currentPassword: currentPassword
+          newPassword: newPassword,
+          currentPassword: currentPassword
         })
-        
-      })
-    } catch (error) {
+      });
 
+      if (response.ok) {
+        setIsOpen(false);
+        resetForm();
+        // Başarılı mesajı gösterilebilir
+      } else {
+        const data = await response.json();
+        setError(data.message || 'Şifre değiştirme işlemi başarısız oldu.');
+      }
+    } catch (error) {
+      setError('Bir hata oluştu. Lütfen tekrar deneyin.');
     }
-  }
+  };
 
   return (
     <Card className="w-full mb-6">
@@ -206,26 +246,65 @@ function PasswordChangeCard() {
         <CardDescription>Hesabınızın şifresini güncelleyin.</CardDescription>
       </CardHeader>
       <CardContent>
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <Label htmlFor="currentPassword">Mevcut Şifre</Label>
-            <Input onChange={(e) => setCurrentPassword(e.target.value)} id="currentPassword" type="password" placeholder="Mevcut şifreniz" />
-          </div>
-          <div>
-            <Label htmlFor="newPassword">Yeni Şifre</Label>
-            <Input onChange={(e) => setNewPassword(e.target.value)} id="newPassword" type="password" placeholder="Yeni şifreniz" />
-          </div>
-          <div>
-            <Label htmlFor="confirmPassword">Yeni Şifre (Tekrar)</Label>
-            <Input onChange={(e) => setConfirmPassword(e.target.value)} id="confirmPassword" type="password" placeholder="Yeni şifrenizi tekrar girin" />
-          </div>
-          <div className="flex justify-start">
-            <Button type="submit">Şifreyi Değiştir</Button>
-          </div>
-        </form>
+        <AlertDialog open={isOpen} onOpenChange={setIsOpen}>
+          <AlertDialogTrigger asChild>
+            <Button>Şifre Değiştir</Button>
+          </AlertDialogTrigger>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Şifre Değiştir</AlertDialogTitle>
+              <AlertDialogDescription>
+                Yeni şifrenizi belirleyin. Güvenliğiniz için güçlü bir şifre seçin.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <form onSubmit={handleSubmit}>
+              <div className="space-y-4 py-4">
+                {error && (
+                  <div className="text-sm font-medium text-red-500 dark:text-red-400">
+                    {error}
+                  </div>
+                )}
+                <div>
+                  <Label htmlFor="currentPassword">Mevcut Şifre</Label>
+                  <Input
+                    id="currentPassword"
+                    type="password"
+                    value={currentPassword}
+                    onChange={(e) => setCurrentPassword(e.target.value)}
+                    placeholder="Mevcut şifreniz"
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="newPassword">Yeni Şifre</Label>
+                  <Input
+                    id="newPassword"
+                    type="password"
+                    value={newPassword}
+                    onChange={(e) => setNewPassword(e.target.value)}
+                    placeholder="Yeni şifreniz"
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="confirmPassword">Yeni Şifre (Tekrar)</Label>
+                  <Input
+                    id="confirmPassword"
+                    type="password"
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    placeholder="Yeni şifrenizi tekrar girin"
+                  />
+                </div>
+              </div>
+              <AlertDialogFooter>
+                <AlertDialogCancel onClick={handleCancel}>İptal</AlertDialogCancel>
+                <AlertDialogAction type="submit">Şifreyi Değiştir</AlertDialogAction>
+              </AlertDialogFooter>
+            </form>
+          </AlertDialogContent>
+        </AlertDialog>
       </CardContent>
     </Card>
-  )
+  );
 }
 
 function DeleteAccountCard() {
