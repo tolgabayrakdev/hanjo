@@ -48,6 +48,7 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Filter } from 'lucide-react'
+import { Eye } from 'lucide-react'
 
 interface Task {
     id?: string
@@ -143,6 +144,53 @@ function Pagination({
                 </Button>
             </div>
         </div>
+    )
+}
+
+function TaskPreviewDialog({ task, open, onOpenChange }: { 
+    task: Task | null
+    open: boolean
+    onOpenChange: (open: boolean) => void 
+}) {
+    if (!task) return null
+
+    return (
+        <Dialog open={open} onOpenChange={onOpenChange}>
+            <DialogContent className="sm:max-w-[500px]">
+                <DialogHeader>
+                    <DialogTitle className="flex items-center gap-2">
+                        <Eye className="h-5 w-5" />
+                        Görev Detayları
+                    </DialogTitle>
+                </DialogHeader>
+                <div className="space-y-4">
+                    <div>
+                        <h4 className="text-sm font-medium mb-1">Başlık</h4>
+                        <p className="text-sm text-muted-foreground">{task.title}</p>
+                    </div>
+                    <div>
+                        <h4 className="text-sm font-medium mb-1">Açıklama</h4>
+                        <p className="text-sm text-muted-foreground">{task.description}</p>
+                    </div>
+                    <div className="flex gap-4">
+                        <div>
+                            <h4 className="text-sm font-medium mb-1">Durum</h4>
+                            <StatusBadge status={task.status} />
+                        </div>
+                        <div>
+                            <h4 className="text-sm font-medium mb-1">Öncelik</h4>
+                            <PriorityBadge priority={task.priority} />
+                        </div>
+                    </div>
+                    <div>
+                        <h4 className="text-sm font-medium mb-1">Bitiş Tarihi</h4>
+                        <p className="text-sm text-muted-foreground">
+                            {new Date(task.dueDate).toLocaleDateString()}
+                        </p>
+                    </div>
+                </div>
+            </DialogContent>
+        </Dialog>
     )
 }
 
@@ -341,6 +389,8 @@ export default function Tasks() {
         // Silme işlemi burada yapılacak
         setTaskToDelete(null)
     }
+
+    const [previewTask, setPreviewTask] = useState<Task | null>(null)
 
     return (
         <div className="p-4">
@@ -547,7 +597,7 @@ export default function Tasks() {
                         </TableRow>
                     ) : (
                         paginatedTasks.map((task) => (
-                            <TableRow key={task.id}>
+                            <TableRow key={task.id} className="cursor-pointer hover:bg-muted/50" onClick={() => setPreviewTask(task)}>
                                 <TableCell className="font-medium">
                                     <div>
                                         <div>{task.title}</div>
@@ -566,16 +616,32 @@ export default function Tasks() {
                                 <TableCell>
                                     <div className="flex gap-2">
                                         <Button
+                                            variant="ghost"
+                                            size="sm"
+                                            onClick={(e) => {
+                                                e.stopPropagation()
+                                                setPreviewTask(task)
+                                            }}
+                                        >
+                                            <Eye className="h-4 w-4" />
+                                        </Button>
+                                        <Button
                                             variant="outline"
                                             size="sm"
-                                            onClick={() => editTask(task)}
+                                            onClick={(e) => {
+                                                e.stopPropagation()
+                                                editTask(task)
+                                            }}
                                         >
                                             Düzenle
                                         </Button>
                                         <Button
                                             variant="destructive"
                                             size="sm"
-                                            onClick={() => setTaskToDelete(task)}
+                                            onClick={(e) => {
+                                                e.stopPropagation()
+                                                setTaskToDelete(task)
+                                            }}
                                         >
                                             Sil
                                         </Button>
@@ -613,6 +679,12 @@ export default function Tasks() {
                     </AlertDialogFooter>
                 </AlertDialogContent>
             </AlertDialog>
+
+            <TaskPreviewDialog 
+                task={previewTask} 
+                open={!!previewTask} 
+                onOpenChange={(open) => !open && setPreviewTask(null)} 
+            />
         </div>
     )
 }
