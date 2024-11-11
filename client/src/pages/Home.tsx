@@ -14,7 +14,6 @@ export default function Home() {
           Kayıt Ol
         </Button>
       </div>
-
     </div>
   )
 }
