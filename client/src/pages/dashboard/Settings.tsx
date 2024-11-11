@@ -82,14 +82,6 @@ function UserInfoCard() {
     }
   };
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setEditedInfo(prev => ({
-      ...prev,
-      [name]: value
-    }));
-  };
-
   if (isLoading) {
     return (
       <Card className="mb-6">
@@ -119,49 +111,64 @@ function UserInfoCard() {
         <CardDescription>Kullanıcı adınızı ve e-posta adresinizi güncelleyin.</CardDescription>
       </CardHeader>
       <CardContent>
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <div className="space-y-4">
           <div>
-            <Label htmlFor="username">Kullanıcı Adı</Label>
+            <Label>Kullanıcı Adı</Label>
             <Input
-              id="username"
-              name="username"
-              value={isEditing ? editedInfo.username : userInfo.username}
-              onChange={handleInputChange}
-              readOnly={!isEditing}
-              className={!isEditing ? "bg-gray-100" : ""}
+              value={userInfo.username}
+              readOnly
+              className="bg-gray-100"
             />
           </div>
           <div>
-            <Label htmlFor="email">E-posta</Label>
+            <Label>E-posta</Label>
             <Input
-              id="email"
-              name="email"
-              type="email"
-              value={isEditing ? editedInfo.email : userInfo.email}
-              onChange={handleInputChange}
-              readOnly={!isEditing}
-              className={!isEditing ? "bg-gray-100" : ""}
+              value={userInfo.email}
+              readOnly
+              className="bg-gray-100"
             />
           </div>
-          <div className="flex justify-start gap-2">
-            {!isEditing ? (
-              <Button type="button" onClick={handleEdit}>
-                Düzenle
-              </Button>
-            ) : (
-              <>
-                <Button type="submit">Kaydet</Button>
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={handleCancel}
-                >
-                  İptal
-                </Button>
-              </>
-            )}
-          </div>
-        </form>
+          <AlertDialog open={isEditing} onOpenChange={setIsEditing}>
+            <AlertDialogTrigger asChild>
+              <Button onClick={handleEdit}>Düzenle</Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Kullanıcı Bilgilerini Düzenle</AlertDialogTitle>
+                <AlertDialogDescription>
+                  Bilgilerinizi güncelleyebilirsiniz.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <form onSubmit={handleSubmit}>
+                <div className="space-y-4 py-4">
+                  <div>
+                    <Label htmlFor="username">Kullanıcı Adı</Label>
+                    <Input
+                      id="username"
+                      name="username"
+                      value={editedInfo.username}
+                      onChange={(e) => setEditedInfo(prev => ({ ...prev, username: e.target.value }))}
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="email">E-posta</Label>
+                    <Input
+                      id="email"
+                      name="email"
+                      type="email"
+                      value={editedInfo.email}
+                      onChange={(e) => setEditedInfo(prev => ({ ...prev, email: e.target.value }))}
+                    />
+                  </div>
+                </div>
+                <AlertDialogFooter>
+                  <AlertDialogCancel onClick={handleCancel}>İptal</AlertDialogCancel>
+                  <AlertDialogAction type="submit">Kaydet</AlertDialogAction>
+                </AlertDialogFooter>
+              </form>
+            </AlertDialogContent>
+          </AlertDialog>
+        </div>
       </CardContent>
     </Card>
   );
