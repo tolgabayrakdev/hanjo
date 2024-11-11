@@ -18,7 +18,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 // Menu items.
 const items = [
   {
-    title: "Home",
+    title: "Anasayfa",
     url: "/dashboard",
     icon: Home,
   },
@@ -28,7 +28,7 @@ const items = [
     icon: Inbox,
   },
   {
-    title: "Settings",
+    title: "Ayarlar",
     url: "/dashboard/settings",
     icon: Settings,
   },

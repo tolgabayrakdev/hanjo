@@ -130,7 +130,7 @@ function UserInfoCard() {
           </div>
           <AlertDialog open={isEditing} onOpenChange={setIsEditing}>
             <AlertDialogTrigger asChild>
-              <Button onClick={handleEdit}>Düzenle</Button>
+              <Button size="sm" onClick={handleEdit}>Düzenle</Button>
             </AlertDialogTrigger>
             <AlertDialogContent>
               <AlertDialogHeader>
@@ -248,7 +248,7 @@ function PasswordChangeCard() {
       <CardContent>
         <AlertDialog open={isOpen} onOpenChange={setIsOpen}>
           <AlertDialogTrigger asChild>
-            <Button>Şifre Değiştir</Button>
+            <Button size="sm">Şifre Değiştir</Button>
           </AlertDialogTrigger>
           <AlertDialogContent>
             <AlertDialogHeader>
@@ -324,7 +324,7 @@ function DeleteAccountCard() {
       <CardContent>
         <AlertDialog open={showDeleteConfirm} onOpenChange={setShowDeleteConfirm}>
           <AlertDialogTrigger asChild>
-            <Button variant="destructive">Hesabı Sil</Button>
+            <Button size="sm" variant="destructive">Hesabı Sil</Button>
           </AlertDialogTrigger>
           <AlertDialogContent>
             <AlertDialogHeader>
