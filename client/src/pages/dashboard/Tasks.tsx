@@ -55,6 +55,7 @@ import {
     TabsList,
     TabsTrigger,
 } from "@/components/ui/tabs"
+import { useToast } from '@/hooks/use-toast'
 
 interface Task {
     id?: string
@@ -201,6 +202,7 @@ function TaskPreviewDialog({ task, open, onOpenChange }: {
 }
 
 export default function Tasks() {
+    const { toast } = useToast();
     const [tasks, setTasks] = useState<Task[]>([])
     const [loading, setLoading] = useState(true)
 
@@ -258,12 +260,39 @@ export default function Tasks() {
         }))
     }
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
-        // Form gönderme işlemleri burada yapılacak
-        setIsOpen(false)
-        setFormData(initialTaskState)
-        setSelectedTask(null)
+        try {
+            const url = `http://localhost:1234/api/v1/tasks${selectedTask?.id ? `/${selectedTask.id}` : ''}`
+            const method = selectedTask ? 'PUT' : 'POST'
+
+            const response = await fetch(url, {
+                method,
+                credentials: 'include',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(formData),
+            })
+
+            if (!response.ok) {
+                throw new Error('Görev kaydedilemedi')
+            }
+
+            // Görevleri yeniden yükle
+            const updatedTasksResponse = await fetch('http://localhost:1234/api/v1/tasks', {
+                credentials: 'include'
+            })
+            const updatedTasks = await updatedTasksResponse.json()
+            setTasks(updatedTasks)
+
+            setIsOpen(false)
+            setFormData(initialTaskState)
+            setSelectedTask(null)
+        } catch (error) {
+            console.error('Görev kaydedilirken hata oluştu:', error)
+            // Burada bir hata bildirimi gösterilebilir
+        }
     }
 
     const editTask = (task: Task) => {
@@ -272,9 +301,33 @@ export default function Tasks() {
         setIsOpen(true)
     }
 
-    const handleDelete = (task: Task) => {
-        // Silme işlemi burada yapılacak
-        setTaskToDelete(null)
+    const handleDelete = async (task: Task) => {
+        try {
+            const response = await fetch(`http://localhost:1234/api/v1/tasks/${task.id}`, {
+                method: 'DELETE',
+                credentials: 'include',
+            })
+
+            if (!response.ok) {
+                throw new Error('Görev silinemedi')
+            }
+            toast({
+                title: "İşlem Basarıyla Gerçekleşti.",
+                description: "Göreviniz silinmiştir."
+            })
+
+            // Görevleri yeniden yükle
+            const updatedTasksResponse = await fetch('http://localhost:1234/api/v1/tasks', {
+                credentials: 'include'
+            })
+            const updatedTasks = await updatedTasksResponse.json()
+            setTasks(updatedTasks)
+
+            setTaskToDelete(null)
+        } catch (error) {
+            console.error('Görev silinirken hata oluştu:', error)
+            // Burada bir hata bildirimi gösterilebilir
+        }
     }
 
     const [previewTask, setPreviewTask] = useState<Task | null>(null)
