@@ -42,7 +42,7 @@ class TaskController {
             const id = req.params.id;
             const result = await this.taskService.getTaskById(parseInt(id));
             if (!result) {
-                throw new HttpException(404, 'Kullanıcı bulunamadı');
+                throw new HttpException(404, 'Task not found!');
             }
             res.status(200).json(result);
         } catch (error) {

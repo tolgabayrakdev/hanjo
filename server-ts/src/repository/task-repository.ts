@@ -43,23 +43,41 @@ class TaskRepository {
     async update(
         id: number,
         task: {
-            title: string;
-            description: string;
-            status: string;
-            priority: string;
-            dueDate: string;
+            title?: string;
+            description?: string;
+            status?: string;
+            priority?: string;
+            dueDate?: string;
         },
     ) {
-        const query = `UPDATE tasks SET title = $1, description = $2, status = $3, priority = $4, due_date = $5 WHERE id = $4 RETURNING *`;
-        const result = await pool.query(query, [
-            task.title,
-            task.description,
-            task.status,
-            task.priority,
-            task.dueDate,
-            id,
-        ]);
+        const updates = Object.entries(task)
+            .filter(([_, value]) => value !== undefined)
+            .map(([key, value]) => {
+                const columnName = key === 'dueDate' ? 'due_date' : key.toLowerCase();
+                return { columnName, value };
+            });
+
+        // Eğer güncellenecek alan yoksa null dön
+        if (updates.length === 0) {
+            return null;
+        }
+
+        const setStatements = updates
+            .map((update, index) => `${update.columnName} = $${index + 1}`)
+            .join(', ');
+
+        const query = `
+        UPDATE tasks 
+        SET ${setStatements} 
+        WHERE id = $${updates.length + 1} 
+        RETURNING *
+    `;
+
+        // Query parametrelerini hazırla
+        const values = [...updates.map(update => update.value), id];
+        const result = await pool.query(query, values);
         return result.rows[0];
+
     }
 
     async delete(id: number) {
