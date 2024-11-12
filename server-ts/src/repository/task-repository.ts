@@ -28,7 +28,7 @@ class TaskRepository {
             dueDate: string;
         },
     ) {
-        const query = `INSERT INTO tasks (title, description, status, priority, due_date, user_id) VALUES ($1, $2, $3, $4, $5) RETURNING *`;
+        const query = `INSERT INTO tasks (title, description, status, priority, due_date, user_id) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *`;
         const result = await pool.query(query, [
             task.title,
             task.description,

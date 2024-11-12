@@ -1,7 +1,10 @@
 import { z } from 'zod';
 
 export const createTaskSchema = z.object({
-    title: z.string(),
+    title: z
+        .string()
+        .min(3, 'must be at least 3 characters long')
+        .max(30, 'must be at most 30 characters long'),
     description: z.string(),
     status: z.enum(['TODO', 'IN_PROGRESS', 'COMPLETED']),
     priority: z.enum(['LOW', 'MEDIUM', 'HIGH']),

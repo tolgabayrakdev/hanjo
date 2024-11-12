@@ -16,7 +16,6 @@ class TaskService {
             status: string;
             priority: string;
             dueDate: string;
-            user_id: number;
         },
     ) {
         let client;
