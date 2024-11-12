@@ -62,7 +62,7 @@ interface Task {
     description: string
     status: 'TODO' | 'IN_PROGRESS' | 'COMPLETED'
     priority: 'LOW' | 'MEDIUM' | 'HIGH'
-    dueDate: string
+    due_date: string
 }
 
 // Öncelik badge'leri iin yardımcı fonksiyon
@@ -191,7 +191,7 @@ function TaskPreviewDialog({ task, open, onOpenChange }: {
                     <div>
                         <h4 className="text-sm font-medium mb-1">Bitiş Tarihi</h4>
                         <p className="text-sm text-muted-foreground">
-                            {new Date(task.dueDate).toLocaleDateString()}
+                            {new Date(task.due_date).toLocaleDateString()}
                         </p>
                     </div>
                 </div>
@@ -201,128 +201,8 @@ function TaskPreviewDialog({ task, open, onOpenChange }: {
 }
 
 export default function Tasks() {
-    const [tasks] = useState<Task[]>([
-        {
-            id: '1',
-            title: 'Web Sitesi Tasarımı',
-            description: 'Şirket web sitesinin yeni tasarımının yapılması ve mobil uyumlu hale getirilmesi',
-            status: 'IN_PROGRESS',
-            priority: 'HIGH',
-            dueDate: '2024-03-25'
-        },
-        {
-            id: '2',
-            title: 'Müşteri Raporları',
-            description: 'Aylık müşteri memnuniyet raporlarının hazırlanması ve analiz edilmesi',
-            status: 'TODO',
-            priority: 'MEDIUM',
-            dueDate: '2024-03-28'
-        },
-        {
-            id: '3',
-            title: 'Personel Eğitimi',
-            description: 'Yeni başlayan personel için oryantasyon programının hazırlanması',
-            status: 'COMPLETED',
-            priority: 'LOW',
-            dueDate: '2024-03-22'
-        },
-        {
-            id: '4',
-            title: 'Güvenlik Güncellemesi',
-            description: 'Sistemdeki güvenlik açıklarının kapatılması ve güvenlik duvarının güncellenmesi',
-            status: 'TODO',
-            priority: 'HIGH',
-            dueDate: '2024-03-24'
-        },
-        {
-            id: '5',
-            title: 'Yeni modül geliştirme',
-            description: 'Uygulama için yeni modül geliştirilecek',
-            status: 'IN_PROGRESS',
-            priority: 'HIGH',
-            dueDate: '2024-03-25'
-        },
-        {
-            id: '6',
-            title: 'Yazılım güncellemeleri kontrol et',
-            description: 'Sistemdeki güncellemeleri kontrol et',
-            status: 'COMPLETED',
-            priority: 'MEDIUM',
-            dueDate: '2024-03-10'
-        },
-        {
-            id: '7',
-            title: 'Veritabanı optimizasyonu',
-            description: 'Veritabanı sorgularını optimize et',
-            status: 'TODO',
-            priority: 'HIGH',
-            dueDate: '2024-03-19'
-        },
-        {
-            id: '8',
-            title: 'Dokümanları güncelle',
-            description: 'Proje dokümanlarını güncelle ve paylaş',
-            status: 'TODO',
-            priority: 'LOW',
-            dueDate: '2024-03-17'
-        },
-        {
-            id: '9',
-            title: 'Geri bildirimleri değerlendir',
-            description: 'Kullanıcılardan gelen geri bildirimleri gözden geçir',
-            status: 'IN_PROGRESS',
-            priority: 'MEDIUM',
-            dueDate: '2024-03-16'
-        },
-        {
-            id: '10',
-            title: 'Sosyal medya planı hazırla',
-            description: 'Sosyal medya post planı oluştur',
-            status: 'TODO',
-            priority: 'LOW',
-            dueDate: '2024-03-24'
-        },
-        {
-            id: '11',
-            title: 'API entegrasyonu tamamla',
-            description: 'Dış servis ile API entegrasyonunu bitir',
-            status: 'TODO',
-            priority: 'HIGH',
-            dueDate: '2024-03-22'
-        },
-        {
-            id: '12',
-            title: 'Tasarım geri bildirimi ver',
-            description: 'Yeni tasarımlar hakkında geri bildirimde bulun',
-            status: 'COMPLETED',
-            priority: 'MEDIUM',
-            dueDate: '2024-03-11'
-        },
-        {
-            id: '13',
-            title: 'Müşteri memnuniyeti anketi oluştur',
-            description: 'Müşteriler için anket hazırlanacak',
-            status: 'TODO',
-            priority: 'MEDIUM',
-            dueDate: '2024-03-20'
-        },
-        {
-            id: '14',
-            title: 'Teknik borçları temizle',
-            description: 'Kodda teknik borçları düzenle ve temizle',
-            status: 'IN_PROGRESS',
-            priority: 'HIGH',
-            dueDate: '2024-03-18'
-        },
-        {
-            id: '15',
-            title: 'Haftalık raporu hazırla',
-            description: 'Ekip için haftalık ilerleme raporu oluştur',
-            status: 'TODO',
-            priority: 'LOW',
-            dueDate: '2024-03-23'
-        }
-    ])
+    const [tasks, setTasks] = useState<Task[]>([])
+    const [loading, setLoading] = useState(true)
 
     const [isOpen, setIsOpen] = useState(false)
     const [selectedTask, setSelectedTask] = useState<Task | null>(null)
@@ -332,7 +212,7 @@ export default function Tasks() {
         description: '',
         status: 'TODO',
         priority: 'MEDIUM',
-        dueDate: '',
+        due_date: '',
     }
 
     const [formData, setFormData] = useState<Task>(initialTaskState)
@@ -398,6 +278,29 @@ export default function Tasks() {
     }
 
     const [previewTask, setPreviewTask] = useState<Task | null>(null)
+
+    useEffect(() => {
+        const fetchTasks = async () => {
+            try {
+                const response = await fetch('http://localhost:1234/api/v1/tasks', {
+                    method: "GET",
+                    credentials: "include"
+                })
+                if (!response.ok) {
+                    throw new Error('Görevler getirilemedi')
+                }
+                const data = await response.json()
+                setTasks(data)
+            } catch (error) {
+                console.error('Görevler yüklenirken hata oluştu:', error)
+                // Burada bir hata bildirimi gösterilebilir
+            } finally {
+                setLoading(false)
+            }
+        }
+
+        fetchTasks()
+    }, [])
 
     return (
         <div className="p-4">
@@ -495,13 +398,13 @@ export default function Tasks() {
                                     </div>
 
                                     <div className="space-y-2">
-                                        <Label htmlFor="dueDate">Bitiş Tarihi</Label>
+                                        <Label htmlFor="due_date">Bitiş Tarihi</Label>
                                         <Input
-                                            id="dueDate"
+                                            id="due_date"
                                             type="date"
-                                            name="dueDate"
-                                            value={formData.dueDate}
-                                            onChange={(e) => handleInputChange('dueDate', e.target.value)}
+                                            name="due_date"
+                                            value={formData.due_date}
+                                            onChange={(e) => handleInputChange('due_date', e.target.value)}
                                             required
                                         />
                                     </div>
@@ -610,7 +513,13 @@ export default function Tasks() {
                             </TableRow>
                         </TableHeader>
                         <TableBody>
-                            {activeTasks.length === 0 ? (
+                            {loading ? (
+                                <TableRow>
+                                    <TableCell colSpan={5} className="text-center py-8 text-muted-foreground">
+                                        Görevler yükleniyor...
+                                    </TableCell>
+                                </TableRow>
+                            ) : activeTasks.length === 0 ? (
                                 <TableRow>
                                     <TableCell colSpan={5} className="text-center py-8 text-muted-foreground">
                                         {searchQuery || statusFilter !== 'ALL' || priorityFilter !== 'ALL'
@@ -637,7 +546,7 @@ export default function Tasks() {
                                             <TableCell>
                                                 <PriorityBadge priority={task.priority} />
                                             </TableCell>
-                                            <TableCell>{new Date(task.dueDate).toLocaleDateString()}</TableCell>
+                                            <TableCell>{new Date(task.due_date).toLocaleDateString()}</TableCell>
                                             <TableCell>
                                                 <div className="flex gap-2">
 
@@ -690,7 +599,13 @@ export default function Tasks() {
                             </TableRow>
                         </TableHeader>
                         <TableBody>
-                            {completedTasks.length === 0 ? (
+                            {loading ? (
+                                <TableRow>
+                                    <TableCell colSpan={4} className="text-center py-8 text-muted-foreground">
+                                        Görevler yükleniyor...
+                                    </TableCell>
+                                </TableRow>
+                            ) : completedTasks.length === 0 ? (
                                 <TableRow>
                                     <TableCell colSpan={4} className="text-center py-8 text-muted-foreground">
                                         Tamamlanan görev bulunmuyor
@@ -712,7 +627,7 @@ export default function Tasks() {
                                             <TableCell>
                                                 <PriorityBadge priority={task.priority} />
                                             </TableCell>
-                                            <TableCell>{new Date(task.dueDate).toLocaleDateString()}</TableCell>
+                                            <TableCell>{new Date(task.due_date).toLocaleDateString()}</TableCell>
                                             <TableCell>
                                                 <div className="flex gap-2">
                                                     <Button
