@@ -17,7 +17,10 @@ class UserActionService {
         try {
             // Email değiştiriliyorsa kontrol et
             if (user.email) {
-                const emailExists = await this.userActionRepository.checkEmailExists(user.email, id);
+                const emailExists = await this.userActionRepository.checkEmailExists(
+                    user.email,
+                    id,
+                );
                 if (emailExists) {
                     throw new HttpException(400, 'Bu email adresi zaten kullanımda');
                 }
@@ -29,14 +32,13 @@ class UserActionService {
             }
 
             const updatedUser = await this.userActionRepository.userUpdate(id, user);
-            
+
             if (!updatedUser) {
                 throw new HttpException(404, 'Kullanıcı bulunamadı');
             }
 
             await this.userActionRepository.commitTransaction(client);
             return updatedUser;
-
         } catch (error) {
             await this.userActionRepository.rollbackTransaction(client);
 
@@ -56,17 +58,22 @@ class UserActionService {
                 throw new HttpException(404, 'User not found!');
             }
 
-            const isPasswordValid = this.helper.comparePassword(data.currentPassword, user.password);
+            const isPasswordValid = this.helper.comparePassword(
+                data.currentPassword,
+                user.password,
+            );
             if (!isPasswordValid) {
                 throw new HttpException(401, 'Wrong password!');
             }
 
             const hashedNewPassword = this.helper.hashPassword(data.newPassword);
-            const updatedUser = await this.userActionRepository.changePassword(id, hashedNewPassword);
+            const updatedUser = await this.userActionRepository.changePassword(
+                id,
+                hashedNewPassword,
+            );
 
             await this.userActionRepository.commitTransaction(client);
             return updatedUser;
-
         } catch (error) {
             await this.userActionRepository.rollbackTransaction(client);
 
@@ -90,7 +97,6 @@ class UserActionService {
 
             await this.userActionRepository.commitTransaction(client);
             return result;
-
         } catch (error) {
             await this.userActionRepository.rollbackTransaction(client);
 

@@ -1,10 +1,8 @@
-import HttpException from "../exceptions/http-exception";
-import UserRepository from "../repository/user-repository";
-import { Helper } from "../util/helper";
-
+import HttpException from '../exceptions/http-exception';
+import UserRepository from '../repository/user-repository';
+import { Helper } from '../util/helper';
 
 class AuthService {
-
     private userRepository: UserRepository;
     private helper: Helper;
 
@@ -18,12 +16,18 @@ class AuthService {
         if (!user) {
             throw new HttpException(404, 'User not found!');
         }
-        
+
         if (!this.helper.comparePassword(password, user.password)) {
             throw new HttpException(401, 'Wrong password!');
         }
-        const accessToken = this.helper.generateAccessToken({ username: user.username, id: user.id });
-        const refreshToken = this.helper.generateRefreshToken({ username: user.username, id: user.id });
+        const accessToken = this.helper.generateAccessToken({
+            username: user.username,
+            id: user.id,
+        });
+        const refreshToken = this.helper.generateRefreshToken({
+            username: user.username,
+            id: user.id,
+        });
         return { accessToken, refreshToken };
     }
 
@@ -38,7 +42,11 @@ class AuthService {
                 throw new HttpException(400, 'Email already exists!');
             }
             const hashedPassword = this.helper.hashPassword(password);
-            const user = await this.userRepository.create({ username, email, password: hashedPassword });
+            const user = await this.userRepository.create({
+                username,
+                email,
+                password: hashedPassword,
+            });
             return user;
         } catch (error) {
             if (error instanceof HttpException) {
@@ -46,26 +54,23 @@ class AuthService {
             }
             throw new HttpException(500, (error as Error).message);
         }
-
     }
 
     async verifyUser(token: string) {
-        try {            
-            const payload: any = this.helper.decodeToken(token);            
+        try {
+            const payload: any = this.helper.decodeToken(token);
             const user = await this.userRepository.getUserById(payload.id);
             if (!user) {
                 throw new HttpException(404, 'User not found!');
             }
-            return { username: user.username, email: user.email, role_id: user.role_id };   
+            return { username: user.username, email: user.email, role_id: user.role_id };
         } catch (error) {
             if (error instanceof HttpException) {
                 throw error;
             }
             throw new HttpException(500, (error as Error).message);
         }
-
     }
-
 }
 
 export default AuthService;

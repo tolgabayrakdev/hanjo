@@ -13,7 +13,10 @@ class UserActionController {
         const id = req.user.id;
         const { currentPassword, newPassword } = req.body;
         try {
-            const result = await this.userActionService.changePassword(id, { currentPassword, newPassword });
+            const result = await this.userActionService.changePassword(id, {
+                currentPassword,
+                newPassword,
+            });
             res.status(200).json(result);
         } catch (error) {
             if (error instanceof HttpException) {

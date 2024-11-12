@@ -4,9 +4,10 @@ import morgan from 'morgan';
 import cookieParser from 'cookie-parser';
 import 'dotenv/config';
 
-import userRoutes from "./routes/user-routes";
-import authRoutes from "./routes/auth-routes";
-import userActionRoutes from "./routes/user-action-routes";
+import userRoutes from './routes/user-routes';
+import authRoutes from './routes/auth-routes';
+import userActionRoutes from './routes/user-action-routes';
+import taskRoutes from './routes/task-routes';
 
 const app = express();
 
@@ -19,6 +20,7 @@ app.use(cookieParser());
 app.use('/api/v1/users', userRoutes);
 app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1', userActionRoutes);
+app.use('/api/v1/tasks', taskRoutes);
 
 app.listen(1234, () => {
     console.log('Server is running on port 1234');
