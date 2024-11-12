@@ -266,20 +266,23 @@ export default function Tasks() {
             const url = `http://localhost:1234/api/v1/tasks${selectedTask?.id ? `/${selectedTask.id}` : ''}`
             const method = selectedTask ? 'PUT' : 'POST'
 
+            const requestData = {
+                ...formData,
+                dueDate: formData.due_date,
+            }
             const response = await fetch(url, {
                 method,
                 credentials: 'include',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify(formData),
+                body: JSON.stringify(requestData),
             })
 
             if (!response.ok) {
                 throw new Error('Görev kaydedilemedi')
             }
 
-            // Görevleri yeniden yükle
             const updatedTasksResponse = await fetch('http://localhost:1234/api/v1/tasks', {
                 credentials: 'include'
             })
@@ -316,7 +319,6 @@ export default function Tasks() {
                 description: "Göreviniz silinmiştir."
             })
 
-            // Görevleri yeniden yükle
             const updatedTasksResponse = await fetch('http://localhost:1234/api/v1/tasks', {
                 credentials: 'include'
             })
