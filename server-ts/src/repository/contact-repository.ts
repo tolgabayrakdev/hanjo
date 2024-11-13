@@ -1,7 +1,7 @@
 import { PoolClient } from 'pg';
 import pool from '../config/database';
 
-class TaskRepository {
+class ContactRepository {
     async beginTransaction() {
         const client = await pool.connect();
         await client.query('BEGIN');
@@ -20,21 +20,19 @@ class TaskRepository {
 
     async create(
         id: number,
-        task: {
-            title: string;
-            description: string;
-            status: string;
-            priority: string;
-            dueDate: string;
+        contact: {
+            name: string;
+            surname: string;
+            email: string;
+            phone_number: string;
         },
     ) {
-        const query = `INSERT INTO tasks (title, description, status, priority, due_date, user_id) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *`;
+        const query = `INSERT INTO contacts (name, surname, email, phone_number, user_id) VALUES ($1, $2, $3, $4, $5) RETURNING *`;
         const result = await pool.query(query, [
-            task.title,
-            task.description,
-            task.status,
-            task.priority,
-            task.dueDate,
+            contact.name,
+            contact.surname,
+            contact.email,
+            contact.phone_number,
             id,
         ]);
         return result.rows[0];
@@ -42,20 +40,19 @@ class TaskRepository {
 
     async update(
         id: number,
-        task: {
-            title?: string;
-            description?: string;
-            status?: string;
-            priority?: string;
-            dueDate?: string;
+        contact: {
+            name?: string;
+            surname?: string;
+            email?: string;
+            phone_number?: string;
         },
     ) {
-        const updates = Object.entries(task)
+        const updates = Object.entries(contact)
             .filter(([_, value]) => value !== undefined)
-            .map(([key, value]) => {
-                const columnName = key === 'dueDate' ? 'due_date' : key.toLowerCase();
-                return { columnName, value };
-            });
+            .map(([key]) => ({
+                columnName: key.toLowerCase(),
+                value: contact[key as keyof typeof contact],
+            }));
 
         // Eğer güncellenecek alan yoksa null dön
         if (updates.length === 0) {
@@ -67,34 +64,33 @@ class TaskRepository {
             .join(', ');
 
         const query = `
-        UPDATE tasks 
+        UPDATE contacts 
         SET ${setStatements} 
         WHERE id = $${updates.length + 1} 
         RETURNING *
     `;
 
-        // Query parametrelerini hazırla
         const values = [...updates.map((update) => update.value), id];
         const result = await pool.query(query, values);
         return result.rows[0];
     }
 
     async delete(id: number) {
-        const query = `DELETE FROM tasks WHERE id = $1`;
+        const query = `DELETE FROM contacts WHERE id = $1`;
         await pool.query(query, [id]);
     }
 
-    async getTaskById(id: number) {
-        const query = `SELECT * FROM tasks WHERE id = $1`;
+    async getContactById(id: number) {
+        const query = `SELECT * FROM contacts WHERE id = $1`;
         const result = await pool.query(query, [id]);
         return result.rows[0];
     }
 
-    async getAllTasks(id: number) {
-        const query = `SELECT * FROM tasks WHERE user_id = $1`;
+    async getAllContacts(id: number) {
+        const query = `SELECT * FROM contacts WHERE user_id = $1`;
         const result = await pool.query(query, [id]);
         return result.rows;
     }
 }
 
-export default TaskRepository;
+export default ContactRepository;

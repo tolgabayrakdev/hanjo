@@ -8,6 +8,7 @@ import userRoutes from './routes/user-routes';
 import authRoutes from './routes/auth-routes';
 import userActionRoutes from './routes/user-action-routes';
 import taskRoutes from './routes/task-routes';
+import contactRoutes from './routes/contact-routes';
 
 const app = express();
 
@@ -21,6 +22,7 @@ app.use('/api/v1/users', userRoutes);
 app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1', userActionRoutes);
 app.use('/api/v1/tasks', taskRoutes);
+app.use('/api/v1/contacts', contactRoutes);
 
 app.listen(1234, () => {
     console.log('Server is running on port 1234');

@@ -1,19 +1,19 @@
-import HttpException from '../exceptions/http-exception';
-import TaskService from '../service/task-service';
 import { Request, Response } from 'express';
+import ContactService from '../service/contact-service';
+import HttpException from '../exceptions/http-exception';
 
-class TaskController {
-    private taskService: TaskService;
+class ContactController {
+    private contactService: ContactService;
 
-    constructor(taskService: TaskService) {
-        this.taskService = taskService;
+    constructor(contactService: ContactService) {
+        this.contactService = contactService;
     }
 
-    async createTask(req: Request, res: Response) {
+    async createContact(req: Request, res: Response) {
         try {
             const id = req.user.id;
-            const task = await this.taskService.createTask(id, req.body);
-            res.status(201).json(task);
+            const contact = await this.contactService.createContact(id, req.body);
+            res.status(201).json(contact);
         } catch (error) {
             if (error instanceof HttpException) {
                 res.status(error.status).json({ error: error.message });
@@ -23,10 +23,10 @@ class TaskController {
         }
     }
 
-    async getAllTasks(req: Request, res: Response) {
+    async getAllContacts(req: Request, res: Response) {
         try {
             const id = req.user.id;
-            const result = await this.taskService.getAllTasks(id);
+            const result = await this.contactService.getAllContacts(id);
             res.status(200).json(result);
         } catch (error) {
             if (error instanceof HttpException) {
@@ -37,12 +37,12 @@ class TaskController {
         }
     }
 
-    async getTaskById(req: Request, res: Response) {
+    async getContactById(req: Request, res: Response) {
         try {
             const id = req.params.id;
-            const result = await this.taskService.getTaskById(parseInt(id));
+            const result = await this.contactService.getContactById(parseInt(id));
             if (!result) {
-                throw new HttpException(404, 'Task not found!');
+                throw new HttpException(404, 'Contact not found!');
             }
             res.status(200).json(result);
         } catch (error) {
@@ -54,9 +54,9 @@ class TaskController {
         }
     }
 
-    async deleteTask(req: Request, res: Response) {
+    async deleteContact(req: Request, res: Response) {
         try {
-            await this.taskService.deleteTask(parseInt(req.params.id));
+            await this.contactService.deleteContact(parseInt(req.params.id));
             res.status(204).send();
         } catch (error) {
             if (error instanceof HttpException) {
@@ -67,11 +67,11 @@ class TaskController {
         }
     }
 
-    async updateTask(req: Request, res: Response) {
+    async updateContact(req: Request, res: Response) {
         try {
             const id = req.params.id;
             const user = req.body;
-            const result = await this.taskService.updateTask(parseInt(id), user);
+            const result = await this.contactService.updateContact(parseInt(id), user);
             if (!result) {
                 throw new HttpException(404, 'Kullanıcı bulunamadı');
             }
@@ -86,4 +86,4 @@ class TaskController {
     }
 }
 
-export default TaskController;
+export default ContactController;
