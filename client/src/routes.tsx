@@ -11,6 +11,8 @@ const DashboardLayout = lazy(() => import("./layouts/DashboardLayout"));
 const DashboardPage = lazy(() => import("./pages/dashboard/Index"));
 const DashboardSettingsPage = lazy(() => import("./pages/dashboard/Settings"));
 const DashboardTasksPage = lazy(() => import("./pages/dashboard/Tasks"));
+const DashboardContactsPage = lazy(() => import("./pages/dashboard/Contacts"));
+
 
 const routes = createBrowserRouter([
     {
@@ -32,6 +34,7 @@ const routes = createBrowserRouter([
             { path: "", element: <DashboardPage />, index: true },
             { path: "settings", element: <DashboardSettingsPage /> },
             { path: "tasks", element: <DashboardTasksPage /> },
+            { path: "contacts", element: <DashboardContactsPage /> },
         ]
     },
     {

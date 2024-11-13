@@ -1,4 +1,4 @@
-import { ChevronUp, Home, Inbox, Settings, User2 } from "lucide-react"
+import { ChevronUp, Home, Inbox, Settings, User2, Users2 } from "lucide-react"
 import { useEffect, useState } from "react"
 import { useLocation, useNavigate } from "react-router-dom"
 
@@ -28,6 +28,11 @@ const items = [
     icon: Inbox,
   },
   {
+    title: "Kişiler",
+    url: "/dashboard/contacts",
+    icon: Users2,
+  },
+  {
     title: "Ayarlar",
     url: "/dashboard/settings",
     icon: Settings,
@@ -48,7 +53,7 @@ export function AppSidebar() {
     // Kullanıcı bilgilerini çek
     fetch("http://localhost:1234/api/v1/auth/verify", {
       method: "POST",
-      credentials: "include" 
+      credentials: "include"
     })
       .then(res => res.json())
       .then(data => {
