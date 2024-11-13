@@ -266,10 +266,12 @@ export default function Tasks() {
             const url = `http://localhost:1234/api/v1/tasks${selectedTask?.id ? `/${selectedTask.id}` : ''}`
             const method = selectedTask ? 'PUT' : 'POST'
 
+            const { due_date, ...rest } = formData
             const requestData = {
-                ...formData,
-                dueDate: formData.due_date,
+                ...rest,
+                dueDate: due_date,
             }
+
             const response = await fetch(url, {
                 method,
                 credentials: 'include',
@@ -299,8 +301,13 @@ export default function Tasks() {
     }
 
     const editTask = (task: Task) => {
+        const formattedDate = new Date(task.due_date).toISOString().split('T')[0];
+        
         setSelectedTask(task)
-        setFormData(task)
+        setFormData({
+            ...task,
+            due_date: formattedDate
+        })
         setIsOpen(true)
     }
 
