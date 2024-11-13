@@ -1,0 +1,6 @@
+Proje Notları
+
+- Kullanıcı görevleri öncelik sırasına göre oluşturup bunları takip edebilecek(todo, in progress, finish).
+? Finans modulü eklenebilir.
+? Kişiler modülü eklenebilir.
+? Doküman ve rapor oluşturma. Kullanıcı burdan doküman ve yazısını oluşturup pdf olarak indirebilecek.
