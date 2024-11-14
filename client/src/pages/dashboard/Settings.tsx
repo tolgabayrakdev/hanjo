@@ -346,7 +346,7 @@ function DeleteAccountCard() {
 
 export default function Settings() {
   return (
-    <div className="p-4 w-full">
+    <div className="p-3 w-full">
       <h1 className="text-2xl font-bold mb-6">Ayarlar</h1>
       <div className="max-w-xl">
         <UserInfoCard />

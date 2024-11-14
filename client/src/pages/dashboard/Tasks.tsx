@@ -302,7 +302,7 @@ export default function Tasks() {
 
     const editTask = (task: Task) => {
         const formattedDate = new Date(task.due_date).toISOString().split('T')[0];
-        
+
         setSelectedTask(task)
         setFormData({
             ...task,
@@ -365,7 +365,8 @@ export default function Tasks() {
     }, [])
 
     return (
-        <div className="p-4">
+        <div className="p-3">
+            <h3 className='text-2xl font-bold mb-6'>Görevler</h3>
             <Tabs defaultValue="active" className="space-y-4">
                 <div className="flex items-center justify-between">
                     <TabsList>
