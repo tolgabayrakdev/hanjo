@@ -14,7 +14,7 @@ class ContactService {
             name: string;
             surname: string;
             email: string;
-            phone_number: string;
+            phone: string;
         },
     ) {
         let client;
@@ -40,7 +40,7 @@ class ContactService {
             name: string;
             surname: string;
             email: string;
-            phone_number: string;
+            phone: string;
         },
     ) {
         let client;
