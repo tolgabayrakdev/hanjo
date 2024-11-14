@@ -34,216 +34,216 @@ const DUMMY_CONTACTS = [
     name: "Ahmet",
     surname: "Yılmaz",
     email: "ahmet@example.com",
-    phone_number: "0532 111 2233"
+    phone: "0532 111 2233"
   },
   {
     id: 2,
     name: "Ayşe",
     surname: "Demir",
     email: "ayse@example.com",
-    phone_number: "0533 444 5566"
+    phone: "0533 444 5566"
   },
   {
     id: 3,
     name: "Mehmet",
     surname: "Kaya",
     email: "mehmet@example.com",
-    phone_number: "0535 777 8899"
+    phone: "0535 777 8899"
   },
   {
     id: 4,
     name: "Ali",
     surname: "Çelik",
     email: "ali@example.com",
-    phone_number: "0542 333 4455"
+    phone: "0542 333 4455"
   },
   {
     id: 5,
     name: "Fatma",
     surname: "Şahin",
     email: "fatma@example.com",
-    phone_number: "0536 666 7788"
+    phone: "0536 666 7788"
   },
   {
     id: 6,
     name: "Emre",
     surname: "Karaca",
     email: "emre@example.com",
-    phone_number: "0544 999 1122"
+    phone: "0544 999 1122"
   },
   {
     id: 7,
     name: "Zeynep",
     surname: "Taş",
     email: "zeynep@example.com",
-    phone_number: "0538 222 3344"
+    phone: "0538 222 3344"
   },
   {
     id: 8,
     name: "Murat",
     surname: "Kılıç",
     email: "murat@example.com",
-    phone_number: "0537 555 6677"
+    phone: "0537 555 6677"
   },
   {
     id: 9,
     name: "Elif",
     surname: "Aydın",
     email: "elif@example.com",
-    phone_number: "0541 888 9900"
+    phone: "0541 888 9900"
   },
   {
     id: 10,
     name: "Hakan",
     surname: "Bulut",
     email: "hakan@example.com",
-    phone_number: "0539 111 2234"
+    phone: "0539 111 2234"
   },
   {
     id: 11,
     name: "Leyla",
     surname: "Keskin",
     email: "leyla@example.com",
-    phone_number: "0543 444 5567"
+    phone: "0543 444 5567"
   },
   {
     id: 12,
     name: "Yasin",
     surname: "Özkan",
     email: "yasin@example.com",
-    phone_number: "0534 777 8890"
+    phone: "0534 777 8890"
   },
   {
     id: 13,
     name: "Gamze",
     surname: "Güneş",
     email: "gamze@example.com",
-    phone_number: "0545 111 2235"
+    phone: "0545 111 2235"
   },
   {
     id: 14,
     name: "Okan",
     surname: "Turan",
     email: "okan@example.com",
-    phone_number: "0531 444 5568"
+    phone: "0531 444 5568"
   },
   {
     id: 15,
     name: "Serkan",
     surname: "Aslan",
     email: "serkan@example.com",
-    phone_number: "0547 777 8891"
+    phone: "0547 777 8891"
   },
   {
     id: 16,
     name: "Gizem",
     surname: "Aksoy",
     email: "gizem@example.com",
-    phone_number: "0532 888 9901"
+    phone: "0532 888 9901"
   },
   {
     id: 17,
     name: "Oya",
     surname: "Uçar",
     email: "oya@example.com",
-    phone_number: "0533 111 2236"
+    phone: "0533 111 2236"
   },
   {
     id: 18,
     name: "Burak",
     surname: "Duman",
     email: "burak@example.com",
-    phone_number: "0535 444 5569"
+    phone: "0535 444 5569"
   },
   {
     id: 19,
     name: "Seda",
     surname: "Gül",
     email: "seda@example.com",
-    phone_number: "0542 777 8892"
+    phone: "0542 777 8892"
   },
   {
     id: 20,
     name: "Barış",
     surname: "Deniz",
     email: "baris@example.com",
-    phone_number: "0543 888 9902"
+    phone: "0543 888 9902"
   },
   {
     id: 21,
     name: "Cem",
     surname: "Koç",
     email: "cem@example.com",
-    phone_number: "0534 111 2237"
+    phone: "0534 111 2237"
   },
   {
     id: 22,
     name: "Canan",
     surname: "Ersoy",
     email: "canan@example.com",
-    phone_number: "0545 444 5570"
+    phone: "0545 444 5570"
   },
   {
     id: 23,
     name: "Ferhat",
     surname: "Kurt",
     email: "ferhat@example.com",
-    phone_number: "0536 777 8893"
+    phone: "0536 777 8893"
   },
   {
     id: 24,
     name: "Nil",
     surname: "Yücel",
     email: "nil@example.com",
-    phone_number: "0537 888 9903"
+    phone: "0537 888 9903"
   },
   {
     id: 25,
     name: "Cansu",
     surname: "Acar",
     email: "cansu@example.com",
-    phone_number: "0541 111 2238"
+    phone: "0541 111 2238"
   },
   {
     id: 26,
     name: "Ozan",
     surname: "Yurt",
     email: "ozan@example.com",
-    phone_number: "0539 444 5571"
+    phone: "0539 444 5571"
   },
   {
     id: 27,
     name: "Aslı",
     surname: "Tan",
     email: "asli@example.com",
-    phone_number: "0532 777 8894"
+    phone: "0532 777 8894"
   },
   {
     id: 28,
     name: "Bora",
     surname: "Sezer",
     email: "bora@example.com",
-    phone_number: "0543 888 9904"
+    phone: "0543 888 9904"
   },
   {
     id: 29,
     name: "Esra",
     surname: "Kara",
     email: "esra@example.com",
-    phone_number: "0534 111 2239"
+    phone: "0534 111 2239"
   },
   {
     id: 30,
     name: "Gökhan",
     surname: "Bozkurt",
     email: "gokhan@example.com",
-    phone_number: "0531 444 5572"
+    phone: "0531 444 5572"
   }
 ];
 
 
 export default function Contacts() {
-  const [contacts, setContacts] = useState<typeof DUMMY_CONTACTS>(DUMMY_CONTACTS);
+  const [contacts, setContacts] = useState<typeof DUMMY_CONTACTS>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
@@ -252,7 +252,7 @@ export default function Contacts() {
     name: '',
     surname: '',
     email: '',
-    phone_number: '',
+    phone: '',
   });
   const [editingContact, setEditingContact] = useState<typeof DUMMY_CONTACTS[0] | null>(null);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
@@ -266,7 +266,10 @@ export default function Contacts() {
   const fetchContacts = async () => {
     try {
       setLoading(true);
-      const response = await fetch('http://localhost:1234/api/v1/contacts');
+      const response = await fetch('http://localhost:1234/api/v1/contacts', {
+        method: 'GET',
+        credentials: 'include',
+      });
       if (!response.ok) throw new Error('Kişiler yüklenirken bir hata oluştu');
       const data = await response.json();
       setContacts(data);
@@ -288,7 +291,7 @@ export default function Contacts() {
       name: contact.name,
       surname: contact.surname,
       email: contact.email,
-      phone_number: contact.phone_number,
+      phone: contact.phone,
     });
     setIsEditDialogOpen(true);
   };
@@ -307,7 +310,7 @@ export default function Contacts() {
       });
 
       if (!response.ok) throw new Error('Kişi silinirken bir hata oluştu');
-      
+
       await fetchContacts(); // Listeyi yenile
       setIsDeleteDialogOpen(false);
       setDeletingContact(null);
@@ -346,7 +349,7 @@ export default function Contacts() {
       name: '',
       surname: '',
       email: '',
-      phone_number: '',
+      phone: '',
     });
   };
 
@@ -363,6 +366,7 @@ export default function Contacts() {
     try {
       const response = await fetch('http://localhost:1234/api/v1/contacts', {
         method: 'POST',
+        credentials: 'include',
         headers: {
           'Content-Type': 'application/json',
         },
@@ -370,7 +374,7 @@ export default function Contacts() {
       });
 
       if (!response.ok) throw new Error('Kişi eklenirken bir hata oluştu');
-      
+
       await fetchContacts(); // Listeyi yenile
       setIsAddDialogOpen(false);
       resetFormData();
@@ -394,7 +398,7 @@ export default function Contacts() {
       });
 
       if (!response.ok) throw new Error('Kişi güncellenirken bir hata oluştu');
-      
+
       await fetchContacts(); // Listeyi yenile
       setIsEditDialogOpen(false);
       setEditingContact(null);
@@ -419,8 +423,8 @@ export default function Contacts() {
           />
         </div>
 
-        <Dialog 
-          open={isAddDialogOpen} 
+        <Dialog
+          open={isAddDialogOpen}
           onOpenChange={(open) => {
             setIsAddDialogOpen(open);
             if (open) {
@@ -457,8 +461,8 @@ export default function Contacts() {
               />
               <Input
                 placeholder="Telefon"
-                value={formData.phone_number}
-                onChange={(e) => setFormData({ ...formData, phone_number: e.target.value })}
+                value={formData.phone}
+                onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
               />
               <Button type="submit" className="w-full">Kaydet</Button>
             </form>
@@ -466,8 +470,8 @@ export default function Contacts() {
         </Dialog>
 
         {/* Düzenleme Modal */}
-        <Dialog 
-          open={isEditDialogOpen} 
+        <Dialog
+          open={isEditDialogOpen}
           onOpenChange={(open) => {
             setIsEditDialogOpen(open);
             if (!open) {
@@ -498,8 +502,8 @@ export default function Contacts() {
               />
               <Input
                 placeholder="Telefon"
-                value={formData.phone_number}
-                onChange={(e) => setFormData({ ...formData, phone_number: e.target.value })}
+                value={formData.phone}
+                onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
               />
               <Button type="submit" className="w-full">Güncelle</Button>
             </form>
@@ -521,8 +525,11 @@ export default function Contacts() {
           <TableBody>
             {loading ? (
               <TableRow>
-                <TableCell colSpan={5} className="text-center py-8">
-                  Yükleniyor...
+                <TableCell colSpan={5}>
+                  <div className="flex flex-col items-center justify-center py-12 space-y-3">
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
+                    <span className="text-gray-500 text-sm">Kişiler yükleniyor...</span>
+                  </div>
                 </TableCell>
               </TableRow>
             ) : currentContacts.length === 0 ? (
@@ -533,20 +540,20 @@ export default function Contacts() {
               </TableRow>
             ) : (
               currentContacts.map((contact) => (
-                <TableRow 
-                  key={contact.id} 
+                <TableRow
+                  key={contact.id}
                   className="hover:bg-gray-100 cursor-pointer"
                   onClick={() => handlePreview(contact)}
                 >
                   <TableCell className="font-medium">{contact.name}</TableCell>
                   <TableCell>{contact.surname}</TableCell>
                   <TableCell>{contact.email}</TableCell>
-                  <TableCell>{contact.phone_number}</TableCell>
+                  <TableCell>{contact.phone}</TableCell>
                   <TableCell className="text-right">
                     <div className="flex justify-end gap-2" onClick={(e) => e.stopPropagation()}>
-                      <Button 
-                        variant="ghost" 
-                        size="icon" 
+                      <Button
+                        variant="ghost"
+                        size="icon"
                         onClick={() => handleEdit(contact)}
                       >
                         <Pencil className="w-4 h-4" />
@@ -648,7 +655,7 @@ export default function Contacts() {
               </div>
               <div className="flex flex-col gap-1">
                 <span className="text-sm font-medium text-gray-500">Telefon</span>
-                <span className="text-lg">{previewContact?.phone_number}</span>
+                <span className="text-lg">{previewContact?.phone}</span>
               </div>
             </div>
           </div>
