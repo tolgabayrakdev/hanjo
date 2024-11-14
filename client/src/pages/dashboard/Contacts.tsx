@@ -326,11 +326,21 @@ export default function Contacts() {
     setIsPreviewDialogOpen(true);
   };
 
-  const filteredContacts = contacts.filter(contact =>
-    Object.values(contact).some(value =>
-      value.toString().toLowerCase().includes(searchTerm.toLowerCase())
-    )
-  );
+  const filteredContacts = contacts.filter(contact => {
+    // Arama terimindeki boşlukları kaldır ve küçük harfe çevir
+    const searchTermLower = searchTerm.toLowerCase().replace(/\s+/g, '');
+    
+    // Tam eşleşme için birleştirilmiş ad-soyad
+    const fullName = `${contact.name}${contact.surname}`.toLowerCase().replace(/\s+/g, '');
+    // Ayrı ayrı ad ve soyad araması için
+    const nameMatch = contact.name?.toLowerCase().includes(searchTermLower);
+    const surnameMatch = contact.surname?.toLowerCase().includes(searchTermLower);
+    const fullNameMatch = fullName.includes(searchTermLower);
+    const emailMatch = contact.email?.toLowerCase().includes(searchTermLower);
+    const phoneMatch = contact.phone?.toLowerCase().includes(searchTermLower);
+
+    return nameMatch || surnameMatch || fullNameMatch || emailMatch || phoneMatch;
+  });
 
   // Sayfalama için hesaplamalar
   const indexOfLastContact = currentPage * itemsPerPage;
