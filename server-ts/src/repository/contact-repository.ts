@@ -24,15 +24,15 @@ class ContactRepository {
             name: string;
             surname: string;
             email: string;
-            phone_number: string;
+            phone: string;
         },
     ) {
-        const query = `INSERT INTO contacts (name, surname, email, phone_number, user_id) VALUES ($1, $2, $3, $4, $5) RETURNING *`;
+        const query = `INSERT INTO contacts (name, surname, email, phone, user_id) VALUES ($1, $2, $3, $4, $5) RETURNING *`;
         const result = await pool.query(query, [
             contact.name,
             contact.surname,
             contact.email,
-            contact.phone_number,
+            contact.phone,
             id,
         ]);
         return result.rows[0];
@@ -44,7 +44,7 @@ class ContactRepository {
             name?: string;
             surname?: string;
             email?: string;
-            phone_number?: string;
+            phone?: string;
         },
     ) {
         const updates = Object.entries(contact)
