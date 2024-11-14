@@ -1,4 +1,4 @@
-import { ChevronUp, Home, Inbox, Settings, User2, Users2 } from "lucide-react"
+import { ChevronUp, Home, Inbox, Settings, User2, Users2, Wallet2 } from "lucide-react"
 import { useEffect, useState } from "react"
 import { useLocation, useNavigate } from "react-router-dom"
 
@@ -31,6 +31,11 @@ const items = [
     title: "Kişiler",
     url: "/dashboard/contacts",
     icon: Users2,
+  },
+  {
+    title: "Bütçe",
+    url: "/dashboard/budgets",
+    icon: Wallet2,
   },
   {
     title: "Ayarlar",

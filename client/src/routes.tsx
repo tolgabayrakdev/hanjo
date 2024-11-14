@@ -12,7 +12,7 @@ const DashboardPage = lazy(() => import("./pages/dashboard/Index"));
 const DashboardSettingsPage = lazy(() => import("./pages/dashboard/Settings"));
 const DashboardTasksPage = lazy(() => import("./pages/dashboard/Tasks"));
 const DashboardContactsPage = lazy(() => import("./pages/dashboard/Contacts"));
-
+const DashboardBudgetsPage = lazy(() => import("./pages/dashboard/Budgets"));
 
 const routes = createBrowserRouter([
     {
@@ -35,6 +35,7 @@ const routes = createBrowserRouter([
             { path: "settings", element: <DashboardSettingsPage /> },
             { path: "tasks", element: <DashboardTasksPage /> },
             { path: "contacts", element: <DashboardContactsPage /> },
+            { path: "budgets", element: <DashboardBudgetsPage /> },
         ]
     },
     {
