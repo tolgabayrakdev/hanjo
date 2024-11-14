@@ -307,6 +307,7 @@ export default function Contacts() {
     try {
       const response = await fetch(`http://localhost:1234/api/v1/contacts/${deletingContact.id}`, {
         method: 'DELETE',
+        credentials: 'include'
       });
 
       if (!response.ok) throw new Error('Kişi silinirken bir hata oluştu');
@@ -391,6 +392,7 @@ export default function Contacts() {
     try {
       const response = await fetch(`http://localhost:1234/api/v1/contacts/${editingContact.id}`, {
         method: 'PUT',
+        credentials: 'include',
         headers: {
           'Content-Type': 'application/json',
         },
@@ -527,7 +529,7 @@ export default function Contacts() {
               <TableRow>
                 <TableCell colSpan={5}>
                   <div className="flex flex-col items-center justify-center py-12 space-y-3">
-                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
+                    <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-gray-900"></div>
                     <span className="text-gray-500 text-sm">Kişiler yükleniyor...</span>
                   </div>
                 </TableCell>

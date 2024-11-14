@@ -9,7 +9,7 @@ import { ThemeProvider } from './components/theme-provider'
 createRoot(document.getElementById('root')!).render(
   <Suspense fallback={<Loading />}>
     <ThemeProvider defaultTheme='light' storageKey='vite-ui-theme'>
-      <RouterProvider router={routes} />
+      <RouterProvider router={routes} future={{ v7_startTransition: true }} />
     </ThemeProvider>
   </Suspense>
 )
