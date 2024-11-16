@@ -39,13 +39,15 @@ class BudgetTransactionRepository {
     }
 
     async deposit(
+        client: PoolClient,
         budget_id: number,
         amount: number,
         category: string,
         description?: string,
     ) {
-        const query = `INSERT INTO transactions (budget_id, type, amount, category, description) VALUES ($1, 'income', $2, $3, $4) RETURNING *`;
-        const result = await pool.query(query, [
+        const query = `INSERT INTO transactions (budget_id, type, amount, category, description) 
+                      VALUES ($1, 'income', $2, $3, $4) RETURNING *`;
+        const result = await client.query(query, [
             budget_id,
             amount,
             category,
@@ -55,13 +57,15 @@ class BudgetTransactionRepository {
     }
 
     async withdraw(
+        client: PoolClient,
         budget_id: number,
         amount: number,
         category: string,
         description?: string,
     ){
-        const query = `INSERT INTO transactions (budget_id, type, amount, category, description) VALUES ($1, 'expense', $2, $3, $4) RETURNING *`;
-        const result = await pool.query(query, [
+        const query = `INSERT INTO transactions (budget_id, type, amount, category, description) 
+                      VALUES ($1, 'expense', $2, $3, $4) RETURNING *`;
+        const result = await client.query(query, [
             budget_id,
             amount,
             category,
@@ -71,15 +75,42 @@ class BudgetTransactionRepository {
     }
 
     async getTransactionById(id: number) {
-        const query = `SELECT * FROM budgets WHERE id = $1`;
+        const query = `SELECT * FROM transactions WHERE id = $1`;
         const result = await pool.query(query, [id]);
         return result.rows[0];
     }
 
-    async getAllTransactions(id: number) {
-        const query = `SELECT * FROM budgets WHERE user_id = $1`;
-        const result = await pool.query(query, [id]);
+    async getAllTransactions(budget_id: number) {
+        const query = `SELECT * FROM transactions WHERE budget_id = $1`;
+        const result = await pool.query(query, [budget_id]);
         return result.rows;
+    }
+
+    async updateBudgetAmount(client: PoolClient, budget_id: number, amount: number) {
+        const query = `
+            UPDATE budgets 
+            SET amount = amount + $1 
+            WHERE id = $2 
+            RETURNING *
+        `;
+        const result = await client.query(query, [amount, budget_id]);
+        return result.rows[0];
+    }
+
+    async checkBudgetBalance(client: PoolClient, budget_id: number, amount: number) {
+        const query = `SELECT amount FROM budgets WHERE id = $1`;
+        const result = await client.query(query, [budget_id]);
+        const budget = result.rows[0];
+        
+        if (!budget) {
+            throw new Error('Bütçe bulunamadı');
+        }
+        
+        if (budget.amount < amount) {
+            throw new Error('Yetersiz bakiye');
+        }
+        
+        return true;
     }
 }
 

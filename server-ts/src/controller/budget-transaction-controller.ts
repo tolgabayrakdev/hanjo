@@ -1,51 +1,73 @@
 import { Request, Response } from 'express';
-import { BudgetTransactionService } from '../service/budget-transaction-service';
+import HttpException from '../exceptions/http-exception';
+import BudgetTransactionService from '../service/budget-transaction-service';
 
-export class BudgetTransactionController {
-    constructor(private transactionService: BudgetTransactionService) {}
+class BudgetController {
+    private budgetTransactionService: BudgetTransactionService;
 
-    async createTransaction(req: Request, res: Response) {
+    constructor(budgetTransactionService: BudgetTransactionService) {
+        this.budgetTransactionService = budgetTransactionService;
+    }
+
+    async addExpense(req: Request, res: Response) {
         try {
-            const transaction = await this.transactionService.createTransaction(req.body);
-            res.status(201).json(transaction);
+            const id = req.user.id;
+            const budget = await this.budgetTransactionService.addExpense(id, req.body);
+            res.status(201).json(budget);
         } catch (error) {
-            res.status(500).json({
-                error: 'İşlem oluşturulurken bir hata oluştu',
-            });
+            if (error instanceof HttpException) {
+                res.status(error.status).json({ error: error.message });
+            } else {
+                res.status(500).json({ error: 'Internal server error' });
+            }
         }
     }
 
-    async getTransactionsByBudget(req: Request, res: Response) {
+    async addIncome(req: Request, res: Response) {
         try {
-            const budgetId = parseInt(req.params.budgetId);
-            const transactions = await this.transactionService.getTransactionsByBudget(budgetId);
-            res.json(transactions);
+            const id = req.user.id;
+            const budget = await this.budgetTransactionService.addIncome(id, req.body);
+            res.status(201).json(budget);
         } catch (error) {
-            res.status(500).json({
-                error: 'İşlemler getirilirken bir hata oluştu',
-            });
+            if (error instanceof HttpException) {
+                res.status(error.status).json({ error: error.message });
+            } else {
+                res.status(500).json({ error: 'Internal server error' });
+            }
         }
     }
 
-    async updateTransaction(req: Request, res: Response) {
+    async getAllTransactions(req: Request, res: Response) {
         try {
-            const id = parseInt(req.params.id);
-            const transaction = await this.transactionService.updateTransaction(id, req.body);
-            res.json(transaction);
+            const id = req.user.id;
+            const result = await this.budgetTransactionService.getAllTransactions(id);
+            res.status(200).json(result);
         } catch (error) {
-            res.status(500).json({
-                error: 'İşlem güncellenirken bir hata oluştu',
-            });
+            if (error instanceof HttpException) {
+                res.status(error.status).json({ error: error.message });
+            } else {
+                res.status(500).json({ error: 'Internal server error' });
+            }
         }
     }
 
-    async deleteTransaction(req: Request, res: Response) {
+    async getTransactionById(req: Request, res: Response) {
         try {
-            const id = parseInt(req.params.id);
-            const transaction = await this.transactionService.deleteTransaction(id);
-            res.json(transaction);
+            const id = req.params.id;
+            const result = await this.budgetTransactionService.getTransactionById(parseInt(id));
+            if (!result) {
+                throw new HttpException(404, 'Contact not found!');
+            }
+            res.status(200).json(result);
         } catch (error) {
-            res.status(500).json({ error: 'İşlem silinirken bir hata oluştu' });
+            if (error instanceof HttpException) {
+                res.status(error.status).json({ error: error.message });
+            } else {
+                res.status(500).json({ error: 'Internal server error' });
+            }
         }
     }
+
 }
+
+export default BudgetController;
