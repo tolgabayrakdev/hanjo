@@ -4,3 +4,58 @@ Proje Notları
 ? Finans modulü eklenebilir.
 ? Kişiler modülü eklenebilir.
 ? Doküman ve rapor oluşturma. Kullanıcı burdan doküman ve yazısını oluşturup pdf olarak indirebilecek.
+
+
+create table roles(
+id SERIAL PRIMARY KEY,
+name text not null,
+created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+updated_at TIMESTAMP 
+
+);
+
+CREATE TABLE users (
+    id SERIAL PRIMARY KEY,
+    username VARCHAR(50) NOT NULL UNIQUE,
+    email VARCHAR(100) NOT NULL UNIQUE,
+    password TEXT NOT NULL,
+    role_id integer references roles(id),
+    created_at TIMESTAMP DEFAULT now(),
+    updated_at TIMESTAMP 
+    
+);
+
+create table contacts (
+	id SERIAL primary key,
+	name VARCHAR(50) not null,
+	surname VARCHAR(50),
+	email VARCHAR(100),
+	phone VARCHAR(100),
+	user_id INTEGER REFERENCES users(id),
+	created_at TIMESTAMP DEFAULT now(),
+    updated_at TIMESTAMP 
+)
+
+create table budgets (
+	id SERIAL primary key,
+	name VARCHAR(50) not null,
+	description VARCHAR(50),
+	amount decimal,
+	user_id INTEGER references users(id),
+	created_at TIMESTAMP DEFAULT now(),
+    updated_at TIMESTAMP 
+)
+
+
+
+CREATE TABLE tasks (
+    id SERIAL PRIMARY KEY,
+    title VARCHAR(255) NOT NULL,
+    description TEXT,
+    status VARCHAR(50) DEFAULT 'pending', -- örneğin: pending, in-progress, completed
+    priority VARCHAR(20) DEFAULT 'medium', -- örneğin: low, medium, high
+    due_date TIMESTAMP, -- Görevin tamamlanması gereken tarih
+    user_id INTEGER REFERENCES users(id) ON DELETE CASCADE, -- Görevle ilişkili kullanıcı
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP
+);
