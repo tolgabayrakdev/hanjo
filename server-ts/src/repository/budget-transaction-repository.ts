@@ -62,7 +62,7 @@ class BudgetTransactionRepository {
         amount: number,
         category: string,
         description?: string,
-    ){
+    ) {
         const query = `INSERT INTO transactions (budget_id, type, amount, category, description) 
                       VALUES ($1, 'expense', $2, $3, $4) RETURNING *`;
         const result = await client.query(query, [
@@ -101,15 +101,15 @@ class BudgetTransactionRepository {
         const query = `SELECT amount FROM budgets WHERE id = $1`;
         const result = await client.query(query, [budget_id]);
         const budget = result.rows[0];
-        
+
         if (!budget) {
             throw new Error('Bütçe bulunamadı');
         }
-        
+
         if (budget.amount < amount) {
             throw new Error('Yetersiz bakiye');
         }
-        
+
         return true;
     }
 }

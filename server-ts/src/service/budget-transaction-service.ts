@@ -21,23 +21,25 @@ class BudgetTransactionService {
                 budgetId,
                 transactionData.amount,
                 transactionData.category,
-                transactionData.description
+                transactionData.description,
             );
 
             const updatedBudget = await this.budgetTransactionRepository.updateBudgetAmount(
                 client,
                 budgetId,
-                transactionData.amount
+                transactionData.amount,
             );
 
             await this.budgetTransactionRepository.commitTransaction(client);
             return {
                 transaction,
-                currentBalance: updatedBudget.amount
+                currentBalance: updatedBudget.amount,
             };
         } catch (error: unknown) {
             await this.budgetTransactionRepository.rollbackTransaction(client);
-            throw new Error(`Gelir eklenirken bir hata oluştu: ${error instanceof Error ? error.message : 'Bilinmeyen hata'}`);
+            throw new Error(
+                `Gelir eklenirken bir hata oluştu: ${error instanceof Error ? error.message : 'Bilinmeyen hata'}`,
+            );
         }
     }
 
@@ -47,7 +49,7 @@ class BudgetTransactionService {
             await this.budgetTransactionRepository.checkBudgetBalance(
                 client,
                 budgetId,
-                transactionData.amount
+                transactionData.amount,
             );
 
             const transaction = await this.budgetTransactionRepository.withdraw(
@@ -55,29 +57,32 @@ class BudgetTransactionService {
                 budgetId,
                 transactionData.amount,
                 transactionData.category,
-                transactionData.description
+                transactionData.description,
             );
 
             const updatedBudget = await this.budgetTransactionRepository.updateBudgetAmount(
                 client,
                 budgetId,
-                -transactionData.amount
+                -transactionData.amount,
             );
 
             await this.budgetTransactionRepository.commitTransaction(client);
             return {
                 transaction,
-                currentBalance: updatedBudget.amount
+                currentBalance: updatedBudget.amount,
             };
         } catch (error: unknown) {
             await this.budgetTransactionRepository.rollbackTransaction(client);
-            throw new Error(`Gider eklenirken bir hata oluştu: ${error instanceof Error ? error.message : 'Bilinmeyen hata'}`);
+            throw new Error(
+                `Gider eklenirken bir hata oluştu: ${error instanceof Error ? error.message : 'Bilinmeyen hata'}`,
+            );
         }
     }
 
     async getTransactionById(transactionId: number) {
         try {
-            const transaction = await this.budgetTransactionRepository.getTransactionById(transactionId);
+            const transaction =
+                await this.budgetTransactionRepository.getTransactionById(transactionId);
             if (!transaction) {
                 throw new Error('İşlem bulunamadı');
             }
@@ -89,7 +94,8 @@ class BudgetTransactionService {
 
     async getAllTransactions(budgetId: number) {
         try {
-            const transactions = await this.budgetTransactionRepository.getAllTransactions(budgetId);
+            const transactions =
+                await this.budgetTransactionRepository.getAllTransactions(budgetId);
             return transactions;
         } catch (error) {
             throw new Error('İşlemler listelenirken bir hata oluştu');
