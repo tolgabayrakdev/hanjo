@@ -18,12 +18,14 @@ router.post(
     '/',
     validateValidation(createBudgetSchema),
     verifyToken,
-    budgetController.createBudget.bind(budgetController));
+    budgetController.createBudget.bind(budgetController),
+);
 router.delete('/:id', verifyToken, budgetController.deleteBudget.bind(budgetController));
 router.put(
     '/:id',
     validateValidation(updateBudgetSchema),
     verifyToken,
-    budgetController.updateBudget.bind(budgetController));
+    budgetController.updateBudget.bind(budgetController),
+);
 
 export default router;

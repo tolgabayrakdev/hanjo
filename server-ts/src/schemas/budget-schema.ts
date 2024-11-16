@@ -12,7 +12,6 @@ export const createBudgetSchema = z.object({
     amount: z.number().min(0, 'must be a positive number'),
 });
 
-
 export const updateBudgetSchema = z.object({
     name: z.string().optional(),
     description: z.string().optional(),

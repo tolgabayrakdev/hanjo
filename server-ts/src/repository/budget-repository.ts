@@ -31,7 +31,7 @@ class BudgetRepository {
             budget.name,
             budget.description,
             budget.amount,
-            id
+            id,
         ]);
         return result.rows[0];
     }
