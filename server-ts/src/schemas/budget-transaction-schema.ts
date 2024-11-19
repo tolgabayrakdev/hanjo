@@ -1,6 +1,7 @@
 import { z } from 'zod';
 
 export const incomeTransactionSchema = z.object({
+    budget_id: z.number(),
     amount: z.number().min(0, 'must be a positive number'),
     category: z
         .string()
@@ -10,6 +11,7 @@ export const incomeTransactionSchema = z.object({
 });
 
 export const expenseTransactionSchema = z.object({
+    budget_id: z.number(),
     amount: z.number().min(0, 'must be a positive number'),
     category: z
         .string()

@@ -11,10 +11,9 @@ class BudgetController {
 
     async addExpense(req: Request, res: Response) {
         try {
-            const id = req.user.id;
-            const budget = await this.budgetTransactionService.addExpense(id, req.body);
+            const budget = await this.budgetTransactionService.addExpense(req.body);
             res.status(201).json(budget);
-        } catch (error) {
+        } catch (error) {            
             if (error instanceof HttpException) {
                 res.status(error.status).json({ error: error.message });
             } else {
@@ -23,12 +22,13 @@ class BudgetController {
         }
     }
 
-    async addIncome(req: Request, res: Response) {
+    async addIncome(req: Request, res: Response) {        
         try {
-            const id = req.user.id;
-            const budget = await this.budgetTransactionService.addIncome(id, req.body);
+            const budget = await this.budgetTransactionService.addIncome(req.body);
             res.status(201).json(budget);
         } catch (error) {
+            console.log(error);
+
             if (error instanceof HttpException) {
                 res.status(error.status).json({ error: error.message });
             } else {

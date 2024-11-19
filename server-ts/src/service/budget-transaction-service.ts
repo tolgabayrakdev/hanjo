@@ -1,6 +1,7 @@
 import BudgetTransactionRepository from '../repository/budget-transaction-repository';
 
 type TransactionCreateDTO = {
+    budget_id: number;
     amount: number;
     category: string;
     description?: string;
@@ -13,20 +14,19 @@ class BudgetTransactionService {
         this.budgetTransactionRepository = budgetTransactionRepository;
     }
 
-    async addIncome(budgetId: number, transactionData: TransactionCreateDTO) {
-        const client = await this.budgetTransactionRepository.beginTransaction();
+    async addIncome(transactionData: TransactionCreateDTO) {
+        let client;
+        client = await this.budgetTransactionRepository.beginTransaction();
         try {
             const transaction = await this.budgetTransactionRepository.deposit(
-                client,
-                budgetId,
+                transactionData.budget_id,
                 transactionData.amount,
                 transactionData.category,
                 transactionData.description,
             );
 
             const updatedBudget = await this.budgetTransactionRepository.updateBudgetAmount(
-                client,
-                budgetId,
+                transactionData.budget_id,
                 transactionData.amount,
             );
 
@@ -43,27 +43,24 @@ class BudgetTransactionService {
         }
     }
 
-    async addExpense(budgetId: number, transactionData: TransactionCreateDTO) {
-        const client = await this.budgetTransactionRepository.beginTransaction();
+    async addExpense(transactionData: TransactionCreateDTO) {
+        let client;
+        client = await this.budgetTransactionRepository.beginTransaction();
         try {
             await this.budgetTransactionRepository.checkBudgetBalance(
-                client,
-                budgetId,
-                transactionData.amount,
+                transactionData.amount
             );
 
             const transaction = await this.budgetTransactionRepository.withdraw(
-                client,
-                budgetId,
+                transactionData.budget_id,
                 transactionData.amount,
                 transactionData.category,
                 transactionData.description,
             );
 
             const updatedBudget = await this.budgetTransactionRepository.updateBudgetAmount(
-                client,
-                budgetId,
                 -transactionData.amount,
+                transactionData.budget_id,
             );
 
             await this.budgetTransactionRepository.commitTransaction(client);

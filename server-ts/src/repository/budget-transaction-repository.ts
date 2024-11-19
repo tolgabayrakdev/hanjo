@@ -39,7 +39,6 @@ class BudgetTransactionRepository {
     }
 
     async deposit(
-        client: PoolClient,
         budget_id: number,
         amount: number,
         category: string,
@@ -47,7 +46,7 @@ class BudgetTransactionRepository {
     ) {
         const query = `INSERT INTO transactions (budget_id, type, amount, category, description) 
                       VALUES ($1, 'income', $2, $3, $4) RETURNING *`;
-        const result = await client.query(query, [
+        const result = await pool.query(query, [
             budget_id,
             amount,
             category,
@@ -57,7 +56,6 @@ class BudgetTransactionRepository {
     }
 
     async withdraw(
-        client: PoolClient,
         budget_id: number,
         amount: number,
         category: string,
@@ -65,7 +63,7 @@ class BudgetTransactionRepository {
     ) {
         const query = `INSERT INTO transactions (budget_id, type, amount, category, description) 
                       VALUES ($1, 'expense', $2, $3, $4) RETURNING *`;
-        const result = await client.query(query, [
+        const result = await pool.query(query, [
             budget_id,
             amount,
             category,
@@ -86,20 +84,20 @@ class BudgetTransactionRepository {
         return result.rows;
     }
 
-    async updateBudgetAmount(client: PoolClient, budget_id: number, amount: number) {
+    async updateBudgetAmount(amount: number, budget_id: number) {
         const query = `
             UPDATE budgets 
             SET amount = amount + $1 
             WHERE id = $2 
             RETURNING *
         `;
-        const result = await client.query(query, [amount, budget_id]);
+        const result = await pool.query(query, [amount, budget_id]);
         return result.rows[0];
     }
 
-    async checkBudgetBalance(client: PoolClient, budget_id: number, amount: number) {
+    async checkBudgetBalance(amount: number) {
         const query = `SELECT amount FROM budgets WHERE id = $1`;
-        const result = await client.query(query, [budget_id]);
+        const result = await pool.query(query, [amount]);
         const budget = result.rows[0];
 
         if (!budget) {
