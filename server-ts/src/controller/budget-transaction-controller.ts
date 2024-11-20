@@ -13,7 +13,7 @@ class BudgetController {
         try {
             const budget = await this.budgetTransactionService.addExpense(req.body);
             res.status(201).json(budget);
-        } catch (error) {                        
+        } catch (error) {                                    
             if (error instanceof HttpException) {
                 res.status(error.status).json({ error: error.message });
             } else {

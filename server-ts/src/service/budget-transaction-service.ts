@@ -36,7 +36,7 @@ class BudgetTransactionService {
                 transaction,
                 currentBalance: updatedBudget.amount,
             };
-        } catch (error) {            
+        } catch (error) {
             await this.budgetTransactionRepository.rollbackTransaction(client);
             throw new HttpException(400, `Gelir eklenirken bir hata oluştu: ${error instanceof Error ? error.message : 'Bilinmeyen hata'}`);
         }
@@ -68,7 +68,7 @@ class BudgetTransactionService {
                 transaction,
                 currentBalance: updatedBudget.amount,
             };
-        } catch (error) {            
+        } catch (error) {
             await this.budgetTransactionRepository.rollbackTransaction(client);
             throw new HttpException(400, `Gider eklenirken bir hata oluştu: ${error instanceof Error ? error.message : 'Bilinmeyen hata'}`);
         }

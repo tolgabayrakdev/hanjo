@@ -26,7 +26,7 @@ app.use('/api/v1', userActionRoutes);
 app.use('/api/v1/tasks', taskRoutes);
 app.use('/api/v1/contacts', contactRoutes);
 app.use('/api/v1/budgets', budgetRoutes);
-app.use('/api/v1/budget-transaction', budgetTransactionRoutes);
+app.use('/api/v1/budget-transactions', budgetTransactionRoutes);
 
 app.listen(1234, () => {
     console.log('Server is running on port 1234');
