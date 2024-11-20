@@ -20,13 +20,16 @@ import {
     TableRow,
 } from "@/components/ui/table"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
+import { useToast } from "@/hooks/use-toast"
+
 
 interface Wallet {
     id: number
     name: string
     description: string
-    initialBalance: number
-    currentBalance: number
+    initial_balance: number
+    current_balance: number
+    amount: number
 }
 
 interface Budget {
@@ -54,10 +57,29 @@ interface NewBudget {
     category: string
 }
 
+// Transaction interface'ini ekle
+interface Transaction {
+    id: number
+    budget_id: number
+    type: 'income' | 'expense'
+    amount: string
+    category: string
+    description: string | null
+    created_at: string
+    updated_at: string | null
+}
+
 export default function Budgets() {
+    const { toast } = useToast();
     const [wallets, setWallets] = useState<Wallet[]>([])
     const [selectedWallet, setSelectedWallet] = useState<number | null>(null)
     const [budgets, setBudgets] = useState<Budget[]>([])
+    const [transactions, setTransactions] = useState<Transaction[]>([])
+    const [isTransactionsLoading, setIsTransactionsLoading] = useState(true)
+    const [isSubmitting, setIsSubmitting] = useState(false)
+    const [currentPage, setCurrentPage] = useState(1)
+    const itemsPerPage = 10
+    
     const [newWallet, setNewWallet] = useState({
         name: '',
         description: '',
@@ -87,61 +109,192 @@ export default function Budgets() {
         })
     }, [selectedWallet])
 
-    // Yeni cüzdan ekleme
-    const handleWalletSubmit = () => {
-        const wallet: Wallet = {
-            id: Date.now(),
+    useEffect(() => {
+        // Fetch wallets when the component mounts
+        fetchWallets()
+    }, [])
+
+    const fetchWallets = async () => {
+        try {
+            const response = await fetch('http://localhost:1234/api/v1/budgets',{
+                method: 'GET',
+                credentials: 'include'
+            });
+            const data = await response.json()
+            setWallets(data)
+        } catch (error) {
+            console.error('Error fetching wallets:', error)
+        }
+    }
+
+    const handleWalletSubmit = async () => {
+        const wallet = {
             name: newWallet.name,
             description: newWallet.description,
-            initialBalance: Number(newWallet.initialBalance),
-            currentBalance: Number(newWallet.initialBalance)
+            initialBalance: Number(newWallet.initialBalance) || 0,
+            currentBalance: Number(newWallet.initialBalance) || 0,
+            amount: Number(newWallet.initialBalance) || 0
         }
-        setWallets([...wallets, wallet])
-        setNewWallet({ name: '', description: '', initialBalance: '' })
+
+        try {
+            const response = await fetch('http://localhost:1234/api/v1/budgets', {
+                method: 'POST',
+                credentials: 'include',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(wallet)
+            })
+
+            if (response.ok) {
+                fetchWallets()
+                setNewWallet({ name: '', description: '', initialBalance: '' })
+                toast({
+                    title: "Başarılı!",
+                    description: "Yeni cüzdan başarıyla oluşturuldu.",
+                    variant: "default"
+                })
+            } else {
+                toast({
+                    title: "Hata!",
+                    description: "Cüzdan oluşturulurken bir hata oluştu.",
+                    variant: "destructive"
+                })
+            }
+        } catch (error) {
+            toast({
+                title: "Hata!",
+                description: "Bir bağlantı hatası oluştu.",
+                variant: "destructive"
+            })
+        }
     }
 
     // Bütçe işlemi ekleme fonksiyonunu güncelle
-    const handleBudgetSubmit = (e: React.FormEvent) => {
+    const handleBudgetSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
         if (!selectedWallet) return
 
-        const budget: Budget = {
-            id: Date.now(),
-            walletId: selectedWallet,
-            title: newBudget.title,
+        setIsSubmitting(true)
+
+        const transaction = {
+            budget_id: selectedWallet,
             amount: Number(newBudget.amount),
-            type: newBudget.type,
             category: newBudget.category,
-            date: new Date().toISOString()
+            description: newBudget.title
         }
 
-        // Cüzdanın bakiyesini güncelle
-        const updatedWallets = wallets.map(wallet => {
-            if (wallet.id === selectedWallet) {
-                const balanceChange = budget.type === 'income' ? budget.amount : -budget.amount
-                return {
-                    ...wallet,
-                    currentBalance: wallet.currentBalance + balanceChange
-                }
-            }
-            return wallet
-        })
+        try {
+            const endpoint = newBudget.type === 'income' 
+                ? 'http://localhost:1234/api/v1/budget-transactions/income'
+                : 'http://localhost:1234/api/v1/budget-transactions/expense'
 
-        setBudgets([...budgets, budget])
-        setWallets(updatedWallets)
-        
-        // Formu tamamen sıfırla
-        setNewBudget({
-            title: '',
-            amount: '',
-            type: 'expense',
-            category: 'other'
-        })
+            const response = await fetch(endpoint, {
+                method: 'POST',
+                credentials: 'include',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(transaction)
+            })
+
+            if (response.ok) {
+                fetchTransactions(selectedWallet)
+                fetchWallets()
+                
+                setNewBudget({
+                    title: '',
+                    amount: '',
+                    type: 'expense',
+                    category: categories.expense[0].toLowerCase()
+                })
+
+                toast({
+                    title: "Başarılı!",
+                    description: `${newBudget.type === 'income' ? 'Gelir' : 'Gider'} işlemi başarıyla eklendi.`,
+                    variant: "default"
+                })
+            } else {
+                toast({
+                    title: "Hata!",
+                    description: "İşlem eklenirken bir hata oluştu.",
+                    variant: "destructive"
+                })
+            }
+        } catch (error) {
+            toast({
+                title: "Hata!",
+                description: "Bir bağlantı hatası oluştu.",
+                variant: "destructive"
+            })
+        } finally {
+            setIsSubmitting(false)
+        }
     }
 
     // Seçili cüzdanın işlemlerini getir
-    const selectedWalletTransactions = budgets.filter(b => b.walletId === selectedWallet)
     const selectedWalletInfo = wallets.find(w => w.id === selectedWallet)
+
+    // İşlemleri getiren fonksiyon
+    const fetchTransactions = async (walletId: number) => {
+        setIsTransactionsLoading(true)
+        try {
+            const response = await fetch('http://localhost:1234/api/v1/budget-transactions', {
+                method: 'POST',
+                credentials: 'include',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ budget_id: walletId })
+            })
+            
+            if (!response.ok) {
+                throw new Error('İşlemler getirilemedi')
+            }
+            
+            const data = await response.json()
+            
+            // 1 saniye bekle, sonra verileri göster
+            setTimeout(() => {
+                setTransactions(data)
+                setIsTransactionsLoading(false)
+            }, 1000)
+            
+        } catch (error) {
+            console.error('Error fetching transactions:', error)
+            // Hata durumunda da 1 saniye bekle
+            setTimeout(() => {
+                setTransactions([])
+                setIsTransactionsLoading(false)
+                toast({
+                    title: "Hata!",
+                    description: "İşlem geçmişi yüklenirken bir hata oluştu.",
+                    variant: "destructive"
+                })
+            }, 1000)
+        }
+    }
+
+    // selectedWallet değiştiğinde işlemleri getirmek için useEffect ekleyelim
+    useEffect(() => {
+        if (selectedWallet) {
+            fetchTransactions(selectedWallet)
+        } else {
+            setTransactions([]) // Cüzdan seçili değilse işlemleri temizle
+            setIsTransactionsLoading(false) // Loading durumunu kapat
+        }
+    }, [selectedWallet]) // selectedWallet değiştiğinde çalışacak
+
+    // Sayfalama için gerekli state'leri ekleyelim
+    const indexOfLastItem = currentPage * itemsPerPage
+    const indexOfFirstItem = indexOfLastItem - itemsPerPage
+    const currentTransactions = transactions.slice(indexOfFirstItem, indexOfLastItem)
+    const totalPages = Math.ceil(transactions.length / itemsPerPage)
+
+    // Sayfa değiştirme fonksiyonu
+    const handlePageChange = (pageNumber: number) => {
+        setCurrentPage(pageNumber)
+    }
 
     return (
         <div className="w-full p-3 space-y-6">
@@ -208,9 +361,11 @@ export default function Budgets() {
                         </CardHeader>
                         <CardContent>
                             <p className="text-sm text-muted-foreground mb-2">{wallet.description}</p>
-                            <div className="text-2xl font-bold">{wallet.currentBalance.toFixed(2)} ₺</div>
+                            <div className="text-2xl font-bold">
+                                {(wallet.amount !== undefined ? Number(wallet.amount).toFixed(2) : '0.00')} ₺
+                            </div>
                             <p className="text-xs text-muted-foreground">
-                                Başlangıç: {wallet.initialBalance.toFixed(2)} ₺
+                                Başlangıç: {(wallet.initial_balance !== undefined ? Number(wallet.initial_balance).toFixed(2) : '0.00')} ₺
                             </p>
                         </CardContent>
                     </Card>
@@ -309,8 +464,16 @@ export default function Budgets() {
                                         type="submit" 
                                         className="w-full"
                                         variant={newBudget.type === 'income' ? 'success' : 'destructive'}
+                                        disabled={isSubmitting}
                                     >
-                                        {newBudget.type === 'income' ? 'Gelir' : 'Gider'} Ekle
+                                        {isSubmitting ? (
+                                            <div className="flex items-center gap-2">
+                                                <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
+                                                İşlem Ekleniyor...
+                                            </div>
+                                        ) : (
+                                            `${newBudget.type === 'income' ? 'Gelir' : 'Gider'} Ekle`
+                                        )}
                                     </Button>
                                 </form>
                             </CardContent>
@@ -322,34 +485,85 @@ export default function Budgets() {
                                 <CardTitle>İşlem Geçmişi</CardTitle>
                             </CardHeader>
                             <CardContent>
-                                <Table>
-                                    <TableHeader>
-                                        <TableRow>
-                                            <TableHead>Tarih</TableHead>
-                                            <TableHead>Başlık</TableHead>
-                                            <TableHead>Kategori</TableHead>
-                                            <TableHead>Tutar</TableHead>
-                                            <TableHead>Tür</TableHead>
-                                        </TableRow>
-                                    </TableHeader>
-                                    <TableBody>
-                                        {selectedWalletTransactions.map((budget) => (
-                                            <TableRow key={budget.id}>
-                                                <TableCell>
-                                                    {new Date(budget.date).toLocaleDateString('tr-TR')}
-                                                </TableCell>
-                                                <TableCell>{budget.title}</TableCell>
-                                                <TableCell>{budget.category}</TableCell>
-                                                <TableCell>{budget.amount.toFixed(2)} ₺</TableCell>
-                                                <TableCell>
-                                                    <span className={budget.type === 'income' ? 'text-green-600' : 'text-red-600'}>
-                                                        {budget.type === 'income' ? 'Gelir' : 'Gider'}
-                                                    </span>
-                                                </TableCell>
-                                            </TableRow>
-                                        ))}
-                                    </TableBody>
-                                </Table>
+                                {isTransactionsLoading ? (
+                                    <div className="flex flex-col items-center justify-center py-8 space-y-4">
+                                        <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin" />
+                                        <div className="text-center text-muted-foreground">
+                                            İşlem geçmişiniz yükleniyor...
+                                        </div>
+                                    </div>
+                                ) : (
+                                    <>
+                                        <Table>
+                                            <TableHeader>
+                                                <TableRow>
+                                                    <TableHead>Tarih</TableHead>
+                                                    <TableHead>Kategori</TableHead>
+                                                    <TableHead>Açıklama</TableHead>
+                                                    <TableHead>Tutar</TableHead>
+                                                    <TableHead>Tür</TableHead>
+                                                </TableRow>
+                                            </TableHeader>
+                                            <TableBody>
+                                                {transactions.length === 0 ? (
+                                                    <TableRow>
+                                                        <TableCell colSpan={5} className="text-center text-muted-foreground">
+                                                            Henüz işlem bulunmuyor
+                                                        </TableCell>
+                                                    </TableRow>
+                                                ) : (
+                                                    currentTransactions.map((transaction) => (
+                                                        <TableRow key={transaction.id}>
+                                                            <TableCell>
+                                                                {new Date(transaction.created_at).toLocaleDateString('tr-TR')}
+                                                            </TableCell>
+                                                            <TableCell>{transaction.category}</TableCell>
+                                                            <TableCell>{transaction.description || '-'}</TableCell>
+                                                            <TableCell>{Number(transaction.amount).toFixed(2)} ₺</TableCell>
+                                                            <TableCell>
+                                                                <span className={transaction.type === 'income' ? 'text-green-600' : 'text-red-600'}>
+                                                                    {transaction.type === 'income' ? 'Gelir' : 'Gider'}
+                                                                </span>
+                                                            </TableCell>
+                                                        </TableRow>
+                                                    ))
+                                                )}
+                                            </TableBody>
+                                        </Table>
+
+                                        {/* Sayfalama */}
+                                        {transactions.length > itemsPerPage && (
+                                            <div className="flex justify-between items-center mt-4">
+                                                <div className="text-sm text-muted-foreground">
+                                                    Toplam {transactions.length} işlem
+                                                </div>
+                                                <div className="flex gap-2">
+                                                    <Button
+                                                        variant="outline"
+                                                        size="sm"
+                                                        onClick={() => handlePageChange(currentPage - 1)}
+                                                        disabled={currentPage === 1}
+                                                    >
+                                                        Önceki
+                                                    </Button>
+                                                    <div className="flex items-center gap-2">
+                                                        <span className="text-sm">
+                                                            Sayfa {currentPage} / {totalPages}
+                                                        </span>
+                                                    </div>
+                                                    <Button
+                                                        variant="outline"
+                                                        size="sm"
+                                                        onClick={() => handlePageChange(currentPage + 1)}
+                                                        disabled={currentPage === totalPages}
+                                                    >
+                                                        Sonraki
+                                                    </Button>
+                                                </div>
+                                            </div>
+                                        )}
+                                    </>
+                                )}
                             </CardContent>
                         </Card>
                     </div>
