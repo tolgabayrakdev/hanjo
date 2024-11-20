@@ -28,222 +28,16 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 
-const DUMMY_CONTACTS = [
-  {
-    id: 1,
-    name: "Ahmet",
-    surname: "Yılmaz",
-    email: "ahmet@example.com",
-    phone: "0532 111 2233"
-  },
-  {
-    id: 2,
-    name: "Ayşe",
-    surname: "Demir",
-    email: "ayse@example.com",
-    phone: "0533 444 5566"
-  },
-  {
-    id: 3,
-    name: "Mehmet",
-    surname: "Kaya",
-    email: "mehmet@example.com",
-    phone: "0535 777 8899"
-  },
-  {
-    id: 4,
-    name: "Ali",
-    surname: "Çelik",
-    email: "ali@example.com",
-    phone: "0542 333 4455"
-  },
-  {
-    id: 5,
-    name: "Fatma",
-    surname: "Şahin",
-    email: "fatma@example.com",
-    phone: "0536 666 7788"
-  },
-  {
-    id: 6,
-    name: "Emre",
-    surname: "Karaca",
-    email: "emre@example.com",
-    phone: "0544 999 1122"
-  },
-  {
-    id: 7,
-    name: "Zeynep",
-    surname: "Taş",
-    email: "zeynep@example.com",
-    phone: "0538 222 3344"
-  },
-  {
-    id: 8,
-    name: "Murat",
-    surname: "Kılıç",
-    email: "murat@example.com",
-    phone: "0537 555 6677"
-  },
-  {
-    id: 9,
-    name: "Elif",
-    surname: "Aydın",
-    email: "elif@example.com",
-    phone: "0541 888 9900"
-  },
-  {
-    id: 10,
-    name: "Hakan",
-    surname: "Bulut",
-    email: "hakan@example.com",
-    phone: "0539 111 2234"
-  },
-  {
-    id: 11,
-    name: "Leyla",
-    surname: "Keskin",
-    email: "leyla@example.com",
-    phone: "0543 444 5567"
-  },
-  {
-    id: 12,
-    name: "Yasin",
-    surname: "Özkan",
-    email: "yasin@example.com",
-    phone: "0534 777 8890"
-  },
-  {
-    id: 13,
-    name: "Gamze",
-    surname: "Güneş",
-    email: "gamze@example.com",
-    phone: "0545 111 2235"
-  },
-  {
-    id: 14,
-    name: "Okan",
-    surname: "Turan",
-    email: "okan@example.com",
-    phone: "0531 444 5568"
-  },
-  {
-    id: 15,
-    name: "Serkan",
-    surname: "Aslan",
-    email: "serkan@example.com",
-    phone: "0547 777 8891"
-  },
-  {
-    id: 16,
-    name: "Gizem",
-    surname: "Aksoy",
-    email: "gizem@example.com",
-    phone: "0532 888 9901"
-  },
-  {
-    id: 17,
-    name: "Oya",
-    surname: "Uçar",
-    email: "oya@example.com",
-    phone: "0533 111 2236"
-  },
-  {
-    id: 18,
-    name: "Burak",
-    surname: "Duman",
-    email: "burak@example.com",
-    phone: "0535 444 5569"
-  },
-  {
-    id: 19,
-    name: "Seda",
-    surname: "Gül",
-    email: "seda@example.com",
-    phone: "0542 777 8892"
-  },
-  {
-    id: 20,
-    name: "Barış",
-    surname: "Deniz",
-    email: "baris@example.com",
-    phone: "0543 888 9902"
-  },
-  {
-    id: 21,
-    name: "Cem",
-    surname: "Koç",
-    email: "cem@example.com",
-    phone: "0534 111 2237"
-  },
-  {
-    id: 22,
-    name: "Canan",
-    surname: "Ersoy",
-    email: "canan@example.com",
-    phone: "0545 444 5570"
-  },
-  {
-    id: 23,
-    name: "Ferhat",
-    surname: "Kurt",
-    email: "ferhat@example.com",
-    phone: "0536 777 8893"
-  },
-  {
-    id: 24,
-    name: "Nil",
-    surname: "Yücel",
-    email: "nil@example.com",
-    phone: "0537 888 9903"
-  },
-  {
-    id: 25,
-    name: "Cansu",
-    surname: "Acar",
-    email: "cansu@example.com",
-    phone: "0541 111 2238"
-  },
-  {
-    id: 26,
-    name: "Ozan",
-    surname: "Yurt",
-    email: "ozan@example.com",
-    phone: "0539 444 5571"
-  },
-  {
-    id: 27,
-    name: "Aslı",
-    surname: "Tan",
-    email: "asli@example.com",
-    phone: "0532 777 8894"
-  },
-  {
-    id: 28,
-    name: "Bora",
-    surname: "Sezer",
-    email: "bora@example.com",
-    phone: "0543 888 9904"
-  },
-  {
-    id: 29,
-    name: "Esra",
-    surname: "Kara",
-    email: "esra@example.com",
-    phone: "0534 111 2239"
-  },
-  {
-    id: 30,
-    name: "Gökhan",
-    surname: "Bozkurt",
-    email: "gokhan@example.com",
-    phone: "0531 444 5572"
-  }
-];
-
+interface Contact {
+    id: number
+    name: string
+    surname: string
+    email: string
+    phone: string
+}
 
 export default function Contacts() {
-  const [contacts, setContacts] = useState<typeof DUMMY_CONTACTS>([]);
+  const [contacts, setContacts] = useState<Contact[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
@@ -254,13 +48,13 @@ export default function Contacts() {
     email: '',
     phone: '',
   });
-  const [editingContact, setEditingContact] = useState<typeof DUMMY_CONTACTS[0] | null>(null);
+  const [editingContact, setEditingContact] = useState<Contact | null>(null);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
-  const [deletingContact, setDeletingContact] = useState<typeof DUMMY_CONTACTS[0] | null>(null);
+  const [deletingContact, setDeletingContact] = useState<Contact | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10; // Sayfa başına gösterilecek kişi sayısı
   const [isPreviewDialogOpen, setIsPreviewDialogOpen] = useState(false);
-  const [previewContact, setPreviewContact] = useState<typeof DUMMY_CONTACTS[0] | null>(null);
+  const [previewContact, setPreviewContact] = useState<Contact | null>(null);
   const [copied, setCopied] = useState(false);
 
   const fetchContacts = async () => {
@@ -285,7 +79,7 @@ export default function Contacts() {
     fetchContacts();
   }, []);
 
-  const handleEdit = (contact: typeof DUMMY_CONTACTS[0]) => {
+  const handleEdit = (contact: Contact) => {
     setEditingContact(contact);
     setFormData({
       name: contact.name,
@@ -296,7 +90,7 @@ export default function Contacts() {
     setIsEditDialogOpen(true);
   };
 
-  const handleDeleteClick = (contact: typeof DUMMY_CONTACTS[0]) => {
+  const handleDeleteClick = (contact: Contact) => {
     setDeletingContact(contact);
     setIsDeleteDialogOpen(true);
   };
@@ -321,7 +115,7 @@ export default function Contacts() {
     }
   };
 
-  const handlePreview = (contact: typeof DUMMY_CONTACTS[0]) => {
+  const handlePreview = (contact: Contact) => {
     setPreviewContact(contact);
     setIsPreviewDialogOpen(true);
   };
