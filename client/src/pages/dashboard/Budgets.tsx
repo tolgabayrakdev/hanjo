@@ -34,15 +34,6 @@ interface Wallet {
     amount: number
 }
 
-interface Budget {
-    id: number
-    walletId: number
-    title: string
-    amount: number
-    type: 'income' | 'expense'
-    category: string
-    date: string
-}
 
 // Kategorileri interface olarak tanımla
 interface Categories {
@@ -75,7 +66,6 @@ export default function Budgets() {
     const { toast } = useToast();
     const [wallets, setWallets] = useState<Wallet[]>([])
     const [selectedWallet, setSelectedWallet] = useState<number | null>(null)
-    const [budgets, setBudgets] = useState<Budget[]>([])
     const [transactions, setTransactions] = useState<Transaction[]>([])
     const [isTransactionsLoading, setIsTransactionsLoading] = useState(true)
     const [isSubmitting, setIsSubmitting] = useState(false)
