@@ -32,7 +32,7 @@ router.get(
     verifyToken,
     budgetTransactionController.getTransactionById.bind(budgetTransactionController),
 );
-router.get(
+router.post(
     '/',
     verifyToken,
     budgetTransactionController.getAllTransactions.bind(budgetTransactionController),

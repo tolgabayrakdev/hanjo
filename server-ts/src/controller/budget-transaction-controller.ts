@@ -37,8 +37,9 @@ class BudgetController {
 
     async getAllTransactions(req: Request, res: Response) {
         try {
-            const id = req.user.id;
-            const result = await this.budgetTransactionService.getAllTransactions(id);
+            const budgetId = req.body.budget_id;
+
+            const result = await this.budgetTransactionService.getAllTransactions(+budgetId);
             res.status(200).json(result);
         } catch (error) {
             if (error instanceof HttpException) {
