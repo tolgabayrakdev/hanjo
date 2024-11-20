@@ -21,6 +21,8 @@ import {
 } from "@/components/ui/table"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { useToast } from "@/hooks/use-toast"
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog"
+import { Trash2 } from "lucide-react"
 
 
 interface Wallet {
@@ -296,6 +298,42 @@ export default function Budgets() {
         setCurrentPage(pageNumber)
     }
 
+    // handleWalletDelete fonksiyonunu ekleyelim
+    const handleWalletDelete = async (walletId: number) => {
+        try {
+            const response = await fetch(`http://localhost:1234/api/v1/budgets/${walletId}`, {
+                method: 'DELETE',
+                credentials: 'include'
+            });
+
+            if (response.ok) {
+                // Seçili cüzdan silindiyse seçimi kaldır
+                if (selectedWallet === walletId) {
+                    setSelectedWallet(null);
+                }
+                // Cüzdanları yeniden yükle
+                fetchWallets();
+                toast({
+                    title: "Başarılı!",
+                    description: "Cüzdan başarıyla silindi.",
+                    variant: "default"
+                });
+            } else {
+                toast({
+                    title: "Hata!",
+                    description: "Cüzdan silinirken bir hata oluştu.",
+                    variant: "destructive"
+                });
+            }
+        } catch (error) {
+            toast({
+                title: "Hata!",
+                description: "Bir bağlantı hatası oluştu.",
+                variant: "destructive"
+            });
+        }
+    };
+
     return (
         <div className="w-full p-3 space-y-6">
             <div className="flex flex-col gap-2">
@@ -353,21 +391,51 @@ export default function Budgets() {
                 {wallets.map(wallet => (
                     <Card 
                         key={wallet.id}
-                        className={`cursor-pointer ${selectedWallet === wallet.id ? 'border-primary' : ''}`}
-                        onClick={() => setSelectedWallet(wallet.id)}
+                        className={`cursor-pointer relative ${selectedWallet === wallet.id ? 'border-primary' : ''}`}
                     >
-                        <CardHeader>
-                            <CardTitle>{wallet.name}</CardTitle>
-                        </CardHeader>
-                        <CardContent>
-                            <p className="text-sm text-muted-foreground mb-2">{wallet.description}</p>
-                            <div className="text-2xl font-bold">
-                                {(wallet.amount !== undefined ? Number(wallet.amount).toFixed(2) : '0.00')} ₺
-                            </div>
-                            <p className="text-xs text-muted-foreground">
-                                Başlangıç: {(wallet.initial_balance !== undefined ? Number(wallet.initial_balance).toFixed(2) : '0.00')} ₺
-                            </p>
-                        </CardContent>
+                        <div onClick={() => setSelectedWallet(wallet.id)}>
+                            <CardHeader>
+                                <CardTitle>{wallet.name}</CardTitle>
+                            </CardHeader>
+                            <CardContent>
+                                <p className="text-sm text-muted-foreground mb-2">{wallet.description}</p>
+                                <div className="text-2xl font-bold">
+                                    {(wallet.amount !== undefined ? Number(wallet.amount).toFixed(2) : '0.00')} ₺
+                                </div>
+                                <p className="text-xs text-muted-foreground">
+                                    Başlangıç: {(wallet.initial_balance !== undefined ? Number(wallet.initial_balance).toFixed(2) : '0.00')} ₺
+                                </p>
+                            </CardContent>
+                        </div>
+                        <AlertDialog>
+                            <AlertDialogTrigger asChild>
+                                <Button 
+                                    variant="ghost" 
+                                    size="icon"
+                                    className="absolute top-2 right-2 hover:bg-destructive hover:text-destructive-foreground"
+                                    onClick={(e) => e.stopPropagation()}
+                                >
+                                    <Trash2 className="h-4 w-4" />
+                                </Button>
+                            </AlertDialogTrigger>
+                            <AlertDialogContent>
+                                <AlertDialogHeader>
+                                    <AlertDialogTitle>Cüzdanı Sil</AlertDialogTitle>
+                                    <AlertDialogDescription>
+                                        Bu cüzdanı silmek istediğinizden emin misiniz? Bu işlem geri alınamaz ve tüm işlem geçmişi silinecektir.
+                                    </AlertDialogDescription>
+                                </AlertDialogHeader>
+                                <AlertDialogFooter>
+                                    <AlertDialogCancel>İptal</AlertDialogCancel>
+                                    <AlertDialogAction
+                                        onClick={() => handleWalletDelete(wallet.id)}
+                                        className="bg-destructive hover:bg-destructive/90"
+                                    >
+                                        Sil
+                                    </AlertDialogAction>
+                                </AlertDialogFooter>
+                            </AlertDialogContent>
+                        </AlertDialog>
                     </Card>
                 ))}
             </div>
