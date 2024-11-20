@@ -1,3 +1,4 @@
+import HttpException from '../exceptions/http-exception';
 import BudgetTransactionRepository from '../repository/budget-transaction-repository';
 
 type TransactionCreateDTO = {
@@ -15,8 +16,7 @@ class BudgetTransactionService {
     }
 
     async addIncome(transactionData: TransactionCreateDTO) {
-        let client;
-        client = await this.budgetTransactionRepository.beginTransaction();
+        let client = await this.budgetTransactionRepository.beginTransaction();
         try {
             const transaction = await this.budgetTransactionRepository.deposit(
                 transactionData.budget_id,
@@ -26,8 +26,9 @@ class BudgetTransactionService {
             );
 
             const updatedBudget = await this.budgetTransactionRepository.updateBudgetAmount(
-                transactionData.budget_id,
                 transactionData.amount,
+                transactionData.budget_id,
+                client
             );
 
             await this.budgetTransactionRepository.commitTransaction(client);
@@ -35,11 +36,9 @@ class BudgetTransactionService {
                 transaction,
                 currentBalance: updatedBudget.amount,
             };
-        } catch (error: unknown) {
+        } catch (error) {            
             await this.budgetTransactionRepository.rollbackTransaction(client);
-            throw new Error(
-                `Gelir eklenirken bir hata oluştu: ${error instanceof Error ? error.message : 'Bilinmeyen hata'}`,
-            );
+            throw new HttpException(400, `Gelir eklenirken bir hata oluştu: ${error instanceof Error ? error.message : 'Bilinmeyen hata'}`);
         }
     }
 
@@ -48,6 +47,7 @@ class BudgetTransactionService {
         client = await this.budgetTransactionRepository.beginTransaction();
         try {
             await this.budgetTransactionRepository.checkBudgetBalance(
+                transactionData.budget_id,
                 transactionData.amount
             );
 
@@ -68,11 +68,9 @@ class BudgetTransactionService {
                 transaction,
                 currentBalance: updatedBudget.amount,
             };
-        } catch (error: unknown) {
+        } catch (error) {            
             await this.budgetTransactionRepository.rollbackTransaction(client);
-            throw new Error(
-                `Gider eklenirken bir hata oluştu: ${error instanceof Error ? error.message : 'Bilinmeyen hata'}`,
-            );
+            throw new HttpException(400, `Gider eklenirken bir hata oluştu: ${error instanceof Error ? error.message : 'Bilinmeyen hata'}`);
         }
     }
 
@@ -81,11 +79,11 @@ class BudgetTransactionService {
             const transaction =
                 await this.budgetTransactionRepository.getTransactionById(transactionId);
             if (!transaction) {
-                throw new Error('İşlem bulunamadı');
+                throw new HttpException(404, 'İşlem bulunamadı');
             }
             return transaction;
         } catch (error) {
-            throw new Error('İşlem getirilirken bir hata oluştu');
+            throw new HttpException(400, 'İşlem getirilirken bir hata oluştu');
         }
     }
 
@@ -95,7 +93,7 @@ class BudgetTransactionService {
                 await this.budgetTransactionRepository.getAllTransactions(budgetId);
             return transactions;
         } catch (error) {
-            throw new Error('İşlemler listelenirken bir hata oluştu');
+            throw new HttpException(400, 'İşlemler listelenirken bir hata oluştu');
         }
     }
 }

@@ -84,20 +84,21 @@ class BudgetTransactionRepository {
         return result.rows;
     }
 
-    async updateBudgetAmount(amount: number, budget_id: number) {
+    async updateBudgetAmount(amount: number, budget_id: number, client?: PoolClient) {
         const query = `
             UPDATE budgets 
             SET amount = amount + $1 
             WHERE id = $2 
             RETURNING *
         `;
-        const result = await pool.query(query, [amount, budget_id]);
+        const queryExecutor = client || pool;
+        const result = await queryExecutor.query(query, [amount, budget_id]);
         return result.rows[0];
     }
 
-    async checkBudgetBalance(amount: number) {
+    async checkBudgetBalance(budget_id: number, amount: number) {
         const query = `SELECT amount FROM budgets WHERE id = $1`;
-        const result = await pool.query(query, [amount]);
+        const result = await pool.query(query, [budget_id]);
         const budget = result.rows[0];
 
         if (!budget) {
